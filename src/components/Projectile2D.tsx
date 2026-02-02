@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import type { Projectile } from '../store/gameStore';
 
@@ -8,47 +8,61 @@ interface Projectile2DProps {
 
 export function Projectile2D({ projectile }: Projectile2DProps) {
     const { start, end } = projectile;
-    const containerRef = useRef<HTMLDivElement>(null);
+    const [gridRect, setGridRect] = useState<DOMRect | null>(null);
 
-    // Convert grid coords to pixel positions
-    // This is approximate - in production we'd calculate based on actual cell positions
-    const cellSize = 50; // approximate
+    useEffect(() => {
+        // Find the grid wrapper to get its actual position
+        const gridWrapper = document.querySelector('.grid-wrapper');
+        if (gridWrapper) {
+            setGridRect(gridWrapper.getBoundingClientRect());
+        }
+    }, []);
+
+    if (!gridRect) return null;
+
+    // Cell dimensions from CSS
+    const cellSize = 50;
     const gap = 12;
-    const gridOffset = { x: 50, y: 50 }; // approximate offset from container edge
 
-    const startX = gridOffset.x + start[0] * (cellSize + gap) + cellSize / 2;
-    const startY = gridOffset.y + start[1] * (cellSize + gap) + cellSize / 2;
-    const endX = gridOffset.x + end[0] * (cellSize + gap) + cellSize / 2;
-    const endY = gridOffset.y + end[1] * (cellSize + gap) + cellSize / 2;
+    // Calculate positions within the grid
+    // start[0] = col, start[1] = row
+    const startX = gridRect.left + start[0] * (cellSize + gap) + cellSize / 2 + 16;
+    const startY = gridRect.top + start[1] * (cellSize + gap) + cellSize / 2 + 16;
+    const endX = gridRect.left + end[0] * (cellSize + gap) + cellSize / 2 + 16;
+    const endY = gridRect.top + end[1] * (cellSize + gap) + cellSize / 2 + 16;
 
     return (
         <motion.div
-            ref={containerRef}
             initial={{
-                x: startX,
-                y: startY,
-                scale: 1,
-                opacity: 1
+                left: startX,
+                top: startY,
+                scale: 0.8,
+                opacity: 1,
+                background: 'radial-gradient(circle at 30% 30%, #ff6b6b, #ee5a5a)',
+                boxShadow: '0 0 25px rgba(255, 107, 107, 0.9), 0 0 50px rgba(255, 107, 107, 0.5)',
             }}
             animate={{
-                x: endX,
-                y: endY,
-                scale: [1, 1.2, 1],
+                left: endX,
+                top: endY,
+                scale: [0.8, 1.2, 1],
+                background: 'radial-gradient(circle at 30% 30%, #4facfe, #00c6fb)',
+                boxShadow: '0 0 25px rgba(79, 172, 254, 0.9), 0 0 50px rgba(79, 172, 254, 0.5)',
             }}
             transition={{
-                duration: 0.5,
-                ease: [0.25, 0.1, 0.25, 1], // Smooth easing
+                duration: 0.8, // Slower for visibility
+                ease: [0.25, 0.1, 0.25, 1],
             }}
             style={{
-                position: 'absolute',
-                width: 30,
-                height: 30,
+                position: 'fixed',
+                width: 36,
+                height: 36,
                 borderRadius: '50%',
-                background: 'radial-gradient(circle at 30% 30%, #4facfe, #4facfe88)',
-                boxShadow: '0 4px 15px rgba(79, 172, 254, 0.6)',
                 pointerEvents: 'none',
-                zIndex: 100,
+                zIndex: 1000,
+                transform: 'translate(-50%, -50%)',
             }}
         />
     );
 }
+
+
