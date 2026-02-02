@@ -1,17 +1,19 @@
 import { useState } from 'react'
 import type { ThreeEvent } from '@react-three/fiber'
 import { WaterDrop } from './WaterDrop'
-import { useGameStore, type CellValue } from '../store/gameStore'
+import { useGameStore } from '../store/gameStore'
 
 interface DropCellProps {
     row: number;
     col: number;
-    value: CellValue;
     position: [number, number, number];
 }
 
-export function DropCell({ row, col, value, position }: DropCellProps) {
+export function DropCell({ row, col, position }: DropCellProps) {
     const addDrop = useGameStore(state => state.addDrop);
+    // Granular subscription: Only re-render if THIS cell changes
+    const value = useGameStore(state => state.grid[row][col]);
+
     const [hovered, setHover] = useState(false);
 
     const handleClick = (e: ThreeEvent<MouseEvent>) => {
