@@ -15,6 +15,7 @@ export interface Projectile {
     start: [number, number]; // [col, row]
     end: [number, number];
     targetPos: [number, number]; // [row, col] specific to grid
+    hasTarget: boolean; // true = will merge with drop, false = fades off-screen
 }
 
 export interface Explosion {
@@ -61,19 +62,28 @@ const createRandomGrid = (): GridState => {
     ) as GridState;
 };
 
-// Receiver helper: Find the first non-empty cell in a direction or return null
-const findTargetInDirection = (grid: GridState, startRow: number, startCol: number, dRow: number, dCol: number): [number, number] | null => {
+// Receiver helper: Find the first non-empty cell in a direction, or edge of grid if none
+const findTargetInDirection = (grid: GridState, startRow: number, startCol: number, dRow: number, dCol: number): { target: [number, number], hasTarget: boolean } => {
     let r = startRow + dRow;
     let c = startCol + dCol;
+    let lastValidR = startRow;
+    let lastValidC = startCol;
 
     while (isValid(r, c)) {
         if (grid[r][c] > 0) {
-            return [r, c]; // Hit a drop!
+            return { target: [r, c], hasTarget: true }; // Hit a drop!
         }
+        lastValidR = r;
+        lastValidC = c;
         r += dRow;
         c += dCol;
     }
-    return null; // Hit wall
+
+    // No drop found - return edge position (or one step beyond for off-screen fade)
+    // Calculate position just outside grid for fade-off effect
+    const edgeR = lastValidR + dRow;
+    const edgeC = lastValidC + dCol;
+    return { target: [edgeR, edgeC], hasTarget: false };
 };
 
 // Recursive explosion logic
@@ -136,31 +146,27 @@ export const useGameStore = create<GameState>((set, get) => ({
         newGrid[r][c] = 0;
         set({ grid: newGrid });
 
-        const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+        const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]]; // up, down, left, right
         const newProjectiles: Projectile[] = [];
 
+        // Always create 4 projectiles in cardinal directions
         for (const [dr, dc] of directions) {
-            const target = findTargetInDirection(newGrid, r, c, dr, dc);
-            if (target) {
-                const [tr, tc] = target;
-                newProjectiles.push({
-                    id: Math.random().toString(),
-                    start: [c, r],
-                    end: [tc, tr],
-                    targetPos: [tr, tc]
-                });
-            }
+            const result = findTargetInDirection(newGrid, r, c, dr, dc);
+            const [tr, tc] = result.target;
+            newProjectiles.push({
+                id: Math.random().toString(),
+                start: [c, r],
+                end: [tc, tr],
+                targetPos: [tr, tc],
+                hasTarget: result.hasTarget
+            });
         }
 
-        if (newProjectiles.length > 0) {
-            set(state => ({ projectiles: [...state.projectiles, ...newProjectiles] }));
-            setTimeout(() => {
-                get().resolveProjectiles(newProjectiles);
-            }, 450); // Match 0.45s animation duration
-        } else {
-            set({ isProcessing: false });
-            get().checkWinCondition();
-        }
+        // Always have 4 projectiles now
+        set(state => ({ projectiles: [...state.projectiles, ...newProjectiles] }));
+        setTimeout(() => {
+            get().resolveProjectiles(newProjectiles);
+        }, 450); // Match 0.45s animation duration
     },
 
     resolveProjectiles: (completedProjectiles: Projectile[]) => {
@@ -172,18 +178,22 @@ export const useGameStore = create<GameState>((set, get) => ({
         let nextExplosions: [number, number][] = [];
         const newVisualExplosions: Explosion[] = [];
 
-        completedProjectiles.forEach(p => {
+        // Only merge projectiles that have actual targets
+        completedProjectiles.filter(p => p.hasTarget).forEach(p => {
             const [r, c] = p.targetPos;
-            newGrid[r][c] += 1;
+            // Ensure we're within bounds (safety check)
+            if (isValid(r, c)) {
+                newGrid[r][c] += 1;
 
-            // Add visual explosion at point of impact
-            newVisualExplosions.push({
-                id: Math.random().toString(),
-                position: [r, c]
-            });
+                // Add visual explosion at point of impact
+                newVisualExplosions.push({
+                    id: Math.random().toString(),
+                    position: [r, c]
+                });
 
-            if (newGrid[r][c] > 3) {
-                nextExplosions.push([r, c]);
+                if (newGrid[r][c] > 3) {
+                    nextExplosions.push([r, c]);
+                }
             }
         });
 
