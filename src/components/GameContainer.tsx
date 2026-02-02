@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useGameStore, GRID_ROWS, GRID_COLS } from '../store/gameStore';
 import { Cell2D } from './Cell2D';
 import { Projectile2D } from './Projectile2D';
+import { PowerupsBar } from './PowerupsBar';
 import './GameContainer.css';
 
 export function GameContainer() {
@@ -52,6 +53,10 @@ export function GameContainer() {
                     <Projectile2D key={p.id} projectile={p} />
                 ))}
             </div>
+
+            {/* Powerups Bar */}
+            <PowerupsBar />
         </div>
     );
 }
+

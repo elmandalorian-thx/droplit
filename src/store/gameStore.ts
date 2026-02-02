@@ -30,12 +30,20 @@ interface GameState {
     explosions: Explosion[];
     isProcessing: boolean;
 
+    // Powerups
+    powerups: { rain: number };
+    activePowerup: 'rain' | null;
+
     // Actions
     addDrop: (row: number, col: number) => void;
     triggerChainReaction: (row: number, col: number) => void;
     resolveProjectiles: (projectiles: Projectile[]) => void;
     checkWinCondition: () => void;
     resetGame: () => void;
+
+    // Powerup Actions
+    selectPowerup: (type: 'rain' | null) => void;
+    useRainPowerup: (centerRow: number, centerCol: number) => void;
 }
 
 // Helper to check if coord is valid
@@ -98,6 +106,10 @@ export const useGameStore = create<GameState>((set, get) => ({
     projectiles: [],
     explosions: [],
     isProcessing: false,
+
+    // Powerups state
+    powerups: { rain: 3 },
+    activePowerup: null,
 
     addDrop: (row: number, col: number) => {
         const state = get();
@@ -233,6 +245,49 @@ export const useGameStore = create<GameState>((set, get) => ({
         status: 'playing',
         projectiles: [],
         explosions: [],
-        isProcessing: false
-    }))
+        isProcessing: false,
+        powerups: { rain: 3 },
+        activePowerup: null,
+    })),
+
+    // Powerup actions
+    selectPowerup: (type: 'rain' | null) => set({ activePowerup: type }),
+
+    useRainPowerup: (centerRow: number, centerCol: number) => {
+        const state = get();
+        if (state.status !== 'playing' || state.isProcessing) return;
+        if (state.powerups.rain <= 0) return;
+
+        // Deselect powerup and decrement count
+        set(s => ({
+            powerups: { ...s.powerups, rain: s.powerups.rain - 1 },
+            activePowerup: null,
+        }));
+
+        // Apply rain to 3x3 grid centered on clicked cell
+        let newGrid = state.grid.map(r => [...r]);
+        const explosions: [number, number][] = [];
+
+        for (let dr = -1; dr <= 1; dr++) {
+            for (let dc = -1; dc <= 1; dc++) {
+                const r = centerRow + dr;
+                const c = centerCol + dc;
+                if (isValid(r, c)) {
+                    newGrid[r][c] = Math.min(newGrid[r][c] + 1, 4) as CellValue;
+                    if (newGrid[r][c] > 3) {
+                        explosions.push([r, c]);
+                    }
+                }
+            }
+        }
+
+        set({ grid: newGrid });
+
+        // Trigger chain reactions if any
+        if (explosions.length > 0) {
+            get().triggerChainReaction(explosions[0][0], explosions[0][1]);
+        } else {
+            get().checkWinCondition();
+        }
+    }
 }));

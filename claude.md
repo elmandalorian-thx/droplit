@@ -44,6 +44,8 @@
 - **Premium 3D CSS styling** - glass highlights, multi-layer shadows, depth effects
 - **Lava lamp effect** - drops morph and merge fluidly
 - Red projectiles morph to blue during flight (0.7s animation)
+- **Powerups system** - Rain powerup adds 1 drop to 3x3 grid area (3 uses per game)
+- Frosted glass powerup bar at bottom with selection glow
 
 ---
 

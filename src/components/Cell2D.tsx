@@ -19,12 +19,20 @@ export function Cell2D({ row, col }: Cell2DProps) {
     const value = useGameStore(state => state.grid[row]?.[col] ?? 0);
     const addDrop = useGameStore(state => state.addDrop);
     const isProcessing = useGameStore(state => state.isProcessing);
+    const activePowerup = useGameStore(state => state.activePowerup);
+    const useRainPowerup = useGameStore(state => state.useRainPowerup);
     const [_, setIsPressed] = useState(false);
 
     const handleTap = useCallback(() => {
         if (isProcessing) return;
-        addDrop(row, col);
-    }, [addDrop, row, col, isProcessing]);
+
+        // If rain powerup is active, use it instead of normal drop
+        if (activePowerup === 'rain') {
+            useRainPowerup(row, col);
+        } else {
+            addDrop(row, col);
+        }
+    }, [addDrop, row, col, isProcessing, activePowerup, useRainPowerup]);
 
     const size = useMemo(() => {
         if (value === 0) return 0;
