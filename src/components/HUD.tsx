@@ -1,4 +1,5 @@
 import { useGameStore } from '../store/gameStore'
+import { PowerupBar } from './ui/PowerupBar'
 
 interface HUDProps {
     onBackToMenu?: () => void;
@@ -122,9 +123,13 @@ export function HUD({ onBackToMenu, playerName, currentLevel }: HUDProps) {
                 </div>
             )}
 
-            {/* Bottom controls (Reset if stuck) */}
-            <div style={{ pointerEvents: 'auto', alignSelf: 'flex-end' }}>
-                <button onClick={resetGame} style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.3)', color: 'white', padding: '5px 10px', borderRadius: '5px', cursor: 'pointer' }}>
+            {/* Bottom controls */}
+            <div style={{ pointerEvents: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                {/* Powerups */}
+                {currentLevel && <PowerupBar currentLevel={currentLevel} />}
+
+                {/* Reset button */}
+                <button onClick={resetGame} style={{ background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.2)', color: 'white', padding: '8px 16px', borderRadius: '12px', cursor: 'pointer', backdropFilter: 'blur(5px)' }}>
                     Reset Level
                 </button>
             </div>

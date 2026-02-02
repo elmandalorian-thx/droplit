@@ -3,6 +3,7 @@ import { GameContainer } from './components/GameContainer'
 import { HUD } from './components/HUD'
 import { WelcomeScreen } from './components/screens/WelcomeScreen'
 import { LevelTransition } from './components/screens/LevelTransition'
+import { WaterBackground } from './components/effects/WaterBackground'
 import { useProfileStore } from './store/profileStore'
 import { useLevelStore } from './store/levelStore'
 import { useGameStore } from './store/gameStore'
@@ -26,8 +27,8 @@ function App() {
   }
 
   const handleContinueFromTransition = () => {
-    // Initialize game with level config
-    initializeLevel(levelConfig)
+    // Initialize game with level config and current level for powerup unlocks
+    initializeLevel(levelConfig, currentLevel)
     setScreen('playing')
   }
 
@@ -69,6 +70,7 @@ function App() {
 
   return (
     <div style={{ width: '100vw', height: '100vh', position: 'relative' }}>
+      <WaterBackground />
       <GameContainer />
       <HUD
         onBackToMenu={handleBackToMenu}

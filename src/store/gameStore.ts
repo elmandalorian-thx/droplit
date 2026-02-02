@@ -31,9 +31,15 @@ interface GameState {
     explosions: Explosion[];
     isProcessing: boolean;
 
-    // Powerups
-    powerups: { rain: number };
-    activePowerup: 'rain' | null;
+    // Powerups - each has 1 use per level
+    powerups: {
+        rain: number;
+        freeze: number;
+        bomb: number;
+        laser: number;
+    };
+    activePowerup: 'rain' | 'freeze' | 'bomb' | 'laser' | null;
+    isFrozen: boolean; // For freeze powerup
 
     // Actions
     addDrop: (row: number, col: number) => void;
@@ -41,11 +47,15 @@ interface GameState {
     resolveProjectiles: (projectiles: Projectile[]) => void;
     checkWinCondition: () => void;
     resetGame: () => void;
-    initializeLevel: (config: { dropsAvailable: number; emptyCells: number; redRatio: number; orangeRatio: number }) => void;
+    initializeLevel: (config: { dropsAvailable: number; emptyCells: number; redRatio: number; orangeRatio: number }, level: number) => void;
 
     // Powerup Actions
-    selectPowerup: (type: 'rain' | null) => void;
+    selectPowerup: (type: 'rain' | 'freeze' | 'bomb' | 'laser' | null) => void;
     useRainPowerup: (centerRow: number, centerCol: number) => void;
+    useBombPowerup: (row: number, col: number) => void;
+    useLaserPowerup: (row: number, col: number, direction: 'row' | 'col') => void;
+    useFreezePowerup: () => void;
+    unfreeze: () => void;
 }
 
 // Helper to check if coord is valid
@@ -118,9 +128,10 @@ export const useGameStore = create<GameState>((set, get) => ({
     explosions: [],
     isProcessing: false,
 
-    // Powerups state
-    powerups: { rain: 3 },
+    // Powerups state - 1 use per powerup per level
+    powerups: { rain: 1, freeze: 0, bomb: 0, laser: 0 },
     activePowerup: null,
+    isFrozen: false,
 
     addDrop: (row: number, col: number) => {
         const state = get();
@@ -257,11 +268,12 @@ export const useGameStore = create<GameState>((set, get) => ({
         projectiles: [],
         explosions: [],
         isProcessing: false,
-        powerups: { rain: 3 },
+        powerups: { rain: 1, freeze: 0, bomb: 0, laser: 0 },
         activePowerup: null,
+        isFrozen: false,
     })),
 
-    initializeLevel: (config: { dropsAvailable: number; emptyCells: number; redRatio: number; orangeRatio: number }) => {
+    initializeLevel: (config: { dropsAvailable: number; emptyCells: number; redRatio: number; orangeRatio: number }, level: number) => {
         const totalCells = GRID_ROWS * GRID_COLS;
         const filledCells = totalCells - config.emptyCells;
 
@@ -290,6 +302,14 @@ export const useGameStore = create<GameState>((set, get) => ({
             grid.push(cells.slice(r * GRID_COLS, (r + 1) * GRID_COLS));
         }
 
+        // Powerups unlock by level: rain=1, freeze=5, bomb=10, laser=15
+        const powerups = {
+            rain: 1,
+            freeze: level >= 5 ? 1 : 0,
+            bomb: level >= 10 ? 1 : 0,
+            laser: level >= 15 ? 1 : 0,
+        };
+
         set({
             grid,
             dropsAvailable: config.dropsAvailable,
@@ -297,13 +317,14 @@ export const useGameStore = create<GameState>((set, get) => ({
             projectiles: [],
             explosions: [],
             isProcessing: false,
-            powerups: { rain: 1 }, // 1 use per powerup per level
+            powerups,
             activePowerup: null,
+            isFrozen: false,
         });
     },
 
     // Powerup actions
-    selectPowerup: (type: 'rain' | null) => set({ activePowerup: type }),
+    selectPowerup: (type: 'rain' | 'freeze' | 'bomb' | 'laser' | null) => set({ activePowerup: type }),
 
     useRainPowerup: (centerRow: number, centerCol: number) => {
         const state = get();
@@ -341,5 +362,110 @@ export const useGameStore = create<GameState>((set, get) => ({
         } else {
             get().checkWinCondition();
         }
+    },
+
+    // Bomb: Clears 3x3 area completely
+    useBombPowerup: (centerRow: number, centerCol: number) => {
+        const state = get();
+        if (state.status !== 'playing' || state.isProcessing) return;
+        if (state.powerups.bomb <= 0) return;
+
+        // Deselect powerup and decrement count
+        set(s => ({
+            powerups: { ...s.powerups, bomb: s.powerups.bomb - 1 },
+            activePowerup: null,
+        }));
+
+        // Clear 3x3 grid centered on clicked cell
+        let newGrid = state.grid.map(r => [...r]);
+        const explosionsToTrigger: [number, number][] = [];
+
+        for (let dr = -1; dr <= 1; dr++) {
+            for (let dc = -1; dc <= 1; dc++) {
+                const r = centerRow + dr;
+                const c = centerCol + dc;
+                if (isValid(r, c) && newGrid[r][c] > 0) {
+                    explosionsToTrigger.push([r, c]);
+                    newGrid[r][c] = 0;
+                }
+            }
+        }
+
+        set({
+            grid: newGrid,
+            explosions: explosionsToTrigger.map(p => ({
+                id: Math.random().toString(),
+                position: p
+            }))
+        });
+
+        // Check win condition after bomb
+        setTimeout(() => {
+            set({ explosions: [] });
+            get().checkWinCondition();
+        }, 500);
+    },
+
+    // Laser: Clears entire row or column
+    useLaserPowerup: (row: number, col: number, direction: 'row' | 'col') => {
+        const state = get();
+        if (state.status !== 'playing' || state.isProcessing) return;
+        if (state.powerups.laser <= 0) return;
+
+        // Deselect powerup and decrement count
+        set(s => ({
+            powerups: { ...s.powerups, laser: s.powerups.laser - 1 },
+            activePowerup: null,
+        }));
+
+        let newGrid = state.grid.map(r => [...r]);
+        const explosionsToTrigger: [number, number][] = [];
+
+        if (direction === 'row') {
+            for (let c = 0; c < GRID_COLS; c++) {
+                if (newGrid[row][c] > 0) {
+                    explosionsToTrigger.push([row, c]);
+                    newGrid[row][c] = 0;
+                }
+            }
+        } else {
+            for (let r = 0; r < GRID_ROWS; r++) {
+                if (newGrid[r][col] > 0) {
+                    explosionsToTrigger.push([r, col]);
+                    newGrid[r][col] = 0;
+                }
+            }
+        }
+
+        set({
+            grid: newGrid,
+            explosions: explosionsToTrigger.map(p => ({
+                id: Math.random().toString(),
+                position: p
+            }))
+        });
+
+        setTimeout(() => {
+            set({ explosions: [] });
+            get().checkWinCondition();
+        }, 500);
+    },
+
+    // Freeze: Next click doesn't cost a drop
+    useFreezePowerup: () => {
+        const state = get();
+        if (state.status !== 'playing' || state.isProcessing) return;
+        if (state.powerups.freeze <= 0) return;
+
+        set(s => ({
+            powerups: { ...s.powerups, freeze: s.powerups.freeze - 1 },
+            activePowerup: null,
+            isFrozen: true,
+        }));
+    },
+
+    unfreeze: () => {
+        set({ isFrozen: false });
     }
 }));
+
