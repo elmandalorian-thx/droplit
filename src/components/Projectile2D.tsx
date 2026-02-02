@@ -14,38 +14,38 @@ export function Projectile2D({ projectile }: Projectile2DProps) {
     useEffect(() => {
         if (calculatedRef.current) return;
 
-        // Find actual cell positions by querying the grid cells
+        // Find the grid wrapper to get its position
         const gridWrapper = document.querySelector('.grid-wrapper');
         if (!gridWrapper) return;
 
-        const cells = gridWrapper.querySelectorAll('.cell-container');
-        const gridCols = 6;
+        const gridRect = gridWrapper.getBoundingClientRect();
 
+        // Grid layout constants from CSS
+        const cellSize = 50;
+        const gap = 12;
+        const padding = 16;
+
+        // Check for mobile viewport
+        const isMobile = window.innerWidth <= 480;
+        const actualCellSize = isMobile ? 40 : cellSize;
+        const actualGap = isMobile ? 8 : gap;
+        const actualPadding = isMobile ? 12 : padding;
+
+        // Calculate center of each cell: padding + (col * (cellSize + gap)) + (cellSize / 2)
         // start[0] = col, start[1] = row
-        const startCellIndex = start[1] * gridCols + start[0];
-        const endCellIndex = end[1] * gridCols + end[0];
+        const startCenterX = gridRect.left + actualPadding + (start[0] * (actualCellSize + actualGap)) + (actualCellSize / 2);
+        const startCenterY = gridRect.top + actualPadding + (start[1] * (actualCellSize + actualGap)) + (actualCellSize / 2);
 
-        const startCell = cells[startCellIndex];
-        const endCell = cells[endCellIndex];
+        const endCenterX = gridRect.left + actualPadding + (end[0] * (actualCellSize + actualGap)) + (actualCellSize / 2);
+        const endCenterY = gridRect.top + actualPadding + (end[1] * (actualCellSize + actualGap)) + (actualCellSize / 2);
 
-        if (startCell && endCell) {
-            // Try to find the actual drop element inside the cell (the motion.div with the gradient)
-            // The drop is the first child div inside cell-container
-            const startDrop = startCell.querySelector('div');
-            const endDrop = endCell.querySelector('div');
-
-            // Use drop position if found, otherwise fall back to cell center
-            const startRect = startDrop ? startDrop.getBoundingClientRect() : startCell.getBoundingClientRect();
-            const endRect = endDrop ? endDrop.getBoundingClientRect() : endCell.getBoundingClientRect();
-
-            setPositions({
-                startX: startRect.left + startRect.width / 2,
-                startY: startRect.top + startRect.height / 2,
-                endX: endRect.left + endRect.width / 2,
-                endY: endRect.top + endRect.height / 2,
-            });
-            calculatedRef.current = true;
-        }
+        setPositions({
+            startX: startCenterX,
+            startY: startCenterY,
+            endX: endCenterX,
+            endY: endCenterY,
+        });
+        calculatedRef.current = true;
     }, [start, end]);
 
     if (!positions) return null;
@@ -55,43 +55,51 @@ export function Projectile2D({ projectile }: Projectile2DProps) {
     return (
         <motion.div
             initial={{
-                left: startX,
-                top: startY,
-                scale: 0.5,
+                x: startX,
+                y: startY,
+                scale: 0.3,
                 opacity: 1,
             }}
             animate={{
-                left: endX,
-                top: endY,
-                scale: [0.5, 1.0, 0.85],
+                x: endX,
+                y: endY,
+                scale: [0.3, 1.2, 0.95, 1.05, 1],
+                opacity: [1, 1, 1, 0.9, 0],
             }}
             transition={{
-                duration: 0.6,
-                ease: [0.25, 0.1, 0.25, 1],
+                duration: 0.65,
+                ease: "easeOut",
+                scale: {
+                    duration: 0.65,
+                    times: [0, 0.4, 0.6, 0.8, 1],
+                    ease: [0.34, 1.56, 0.64, 1], // Bouncy spring
+                },
+                opacity: {
+                    duration: 0.65,
+                    times: [0, 0.6, 0.8, 0.95, 1],
+                }
             }}
             style={{
                 position: 'fixed',
-                width: 28,
-                height: 28,
+                left: 0,
+                top: 0,
+                width: 24,
+                height: 24,
                 borderRadius: '50%',
-                // Lava lamp style - glossy red morphing to blue
                 background: `
-                    radial-gradient(circle at 30% 30%, #ff9999ee, transparent 50%),
-                    radial-gradient(circle at 50% 50%, #ff6b6b, #e04545)
+                    radial-gradient(circle at 30% 30%, rgba(255,180,180,0.9), transparent 50%),
+                    radial-gradient(circle at 50% 50%, #ff6b6b, #d63031)
                 `,
                 boxShadow: `
-                    0 0 25px rgba(255, 107, 107, 0.8),
-                    0 0 50px rgba(255, 107, 107, 0.4),
-                    inset 0 2px 6px rgba(255,255,255,0.4)
+                    0 0 20px rgba(255, 107, 107, 0.7),
+                    0 0 40px rgba(255, 107, 107, 0.4),
+                    inset 0 2px 4px rgba(255,255,255,0.5)
                 `,
                 pointerEvents: 'none',
                 zIndex: 1000,
-                transform: 'translate(-50%, -50%)',
+                marginLeft: -12, // Half width to center
+                marginTop: -12,  // Half height to center
             }}
         />
     );
 }
-
-
-
-
