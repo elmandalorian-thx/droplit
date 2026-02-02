@@ -156,7 +156,7 @@ export const useGameStore = create<GameState>((set, get) => ({
             set(state => ({ projectiles: [...state.projectiles, ...newProjectiles] }));
             setTimeout(() => {
                 get().resolveProjectiles(newProjectiles);
-            }, 700); // Match 0.7s animation duration
+            }, 450); // Match 0.45s animation duration
         } else {
             set({ isProcessing: false });
             get().checkWinCondition();

@@ -41,10 +41,6 @@ export function Cell2D({ row, col }: Cell2DProps) {
 
     const palette = COLORS[value] || COLORS[0];
 
-    // Randomize wobble for organic feel
-    const wobbleDuration = useMemo(() => 2.2 + Math.random() * 0.6, []);
-    const wobbleDelay = useMemo(() => Math.random() * 0.8, []);
-
     return (
         <div
             className="cell-container"
@@ -59,21 +55,21 @@ export function Cell2D({ row, col }: Cell2DProps) {
             }}
             onClick={handleTap}
         >
-            <AnimatePresence mode="wait">
+            <AnimatePresence mode="popLayout">
                 {value > 0 && (
                     <motion.div
-                        key={`drop-${row}-${col}`}
-                        initial={{ scale: 0, opacity: 0 }}
+                        key={`drop-${row}-${col}-${value}`}
+                        initial={{ scale: 0.5, opacity: 0 }}
                         animate={{
                             scale: 1,
                             opacity: 1,
-                            y: [0, -2, 0, 2, 0],
-                            scaleX: [1, 1.02, 1, 0.98, 1],
-                            scaleY: [1, 0.98, 1, 1.02, 1],
                         }}
-                        exit={{ scale: 1.5, opacity: 0 }} // Burst outward on exit
-                        whileHover={{ scale: 1.12, y: -2 }}
-                        whileTap={{ scale: 0.88 }}
+                        exit={{
+                            scale: 0.3,
+                            opacity: 0,
+                        }}
+                        whileHover={{ scale: 1.08 }}
+                        whileTap={{ scale: 0.92 }}
                         onTapStart={() => setIsPressed(true)}
                         onTap={() => setIsPressed(false)}
                         onTapCancel={() => setIsPressed(false)}
@@ -82,27 +78,16 @@ export function Cell2D({ row, col }: Cell2DProps) {
                             height: size,
                             borderRadius: '50%',
                             position: 'relative',
-                            // Premium 3D gradient - lighter from top-left
-                            background: `
-                                radial-gradient(circle at 25% 25%, ${palette.light}ee, transparent 50%),
-                                radial-gradient(circle at 50% 50%, ${palette.main}, ${palette.dark})
-                            `,
-                            // Multi-layer shadow for depth
-                            boxShadow: `
-                                0 8px 25px ${palette.dark}55,
-                                0 4px 12px ${palette.main}44,
-                                inset 0 -4px 12px ${palette.dark}55,
-                                inset 0 4px 8px rgba(255,255,255,0.35)
-                            `,
-                            // Subtle border for glass effect
-                            border: `1px solid ${palette.light}44`,
+                            background: `radial-gradient(circle at 30% 30%, ${palette.light}, ${palette.main} 60%, ${palette.dark})`,
+                            // Simplified shadow for GPU performance
+                            boxShadow: `0 4px 16px ${palette.dark}66, inset 0 2px 4px rgba(255,255,255,0.3)`,
+                            willChange: 'transform, opacity',
                         }}
                         transition={{
-                            scale: { type: 'spring', stiffness: 400, damping: 18 },
-                            opacity: { duration: 0.25 },
-                            y: { duration: wobbleDuration, repeat: Infinity, ease: 'easeInOut', delay: wobbleDelay },
-                            scaleX: { duration: wobbleDuration, repeat: Infinity, ease: 'easeInOut', delay: wobbleDelay },
-                            scaleY: { duration: wobbleDuration, repeat: Infinity, ease: 'easeInOut', delay: wobbleDelay },
+                            type: 'spring',
+                            stiffness: 500,
+                            damping: 25,
+                            opacity: { duration: 0.2 },
                         }}
                     />
                 )}
@@ -110,4 +95,5 @@ export function Cell2D({ row, col }: Cell2DProps) {
         </div>
     );
 }
+
 
