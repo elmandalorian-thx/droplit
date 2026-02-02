@@ -1,6 +1,11 @@
 import { useGameStore } from '../store/gameStore'
 
-export function HUD() {
+interface HUDProps {
+    onBackToMenu?: () => void;
+    playerName?: string;
+}
+
+export function HUD({ onBackToMenu, playerName }: HUDProps) {
     const { dropsAvailable, status, resetGame } = useGameStore();
 
     return (
@@ -20,8 +25,52 @@ export function HUD() {
             fontFamily: 'Inter, sans-serif'
         }}>
             {/* Top Bar */}
-            <div style={{ alignSelf: 'center', background: 'rgba(0,0,0,0.5)', padding: '10px 20px', borderRadius: '20px', backdropFilter: 'blur(5px)' }}>
-                <h2 style={{ margin: 0, fontSize: '1.5rem' }}>Drops: {dropsAvailable}</h2>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                {/* Menu Button */}
+                {onBackToMenu && (
+                    <button
+                        onClick={onBackToMenu}
+                        style={{
+                            pointerEvents: 'auto',
+                            background: 'rgba(0,0,0,0.5)',
+                            padding: '8px 16px',
+                            borderRadius: '12px',
+                            backdropFilter: 'blur(5px)',
+                            border: '1px solid rgba(255,255,255,0.1)',
+                            color: 'white',
+                            cursor: 'pointer',
+                            fontSize: '0.875rem',
+                        }}
+                    >
+                        ← Menu
+                    </button>
+                )}
+
+                {/* Drops Counter - Center */}
+                <div style={{
+                    position: 'absolute',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    background: 'rgba(0,0,0,0.5)',
+                    padding: '10px 20px',
+                    borderRadius: '20px',
+                    backdropFilter: 'blur(5px)'
+                }}>
+                    <h2 style={{ margin: 0, fontSize: '1.5rem' }}>Drops: {dropsAvailable}</h2>
+                </div>
+
+                {/* Player Name */}
+                {playerName && (
+                    <div style={{
+                        background: 'rgba(0,0,0,0.5)',
+                        padding: '8px 16px',
+                        borderRadius: '12px',
+                        backdropFilter: 'blur(5px)',
+                        fontSize: '0.875rem',
+                    }}>
+                        👤 {playerName}
+                    </div>
+                )}
             </div>
 
             {/* Game Over / Win Modal */}
