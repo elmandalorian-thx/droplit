@@ -37,12 +37,13 @@
 
 ### Feb 2026 - 2D Refactor & Visual Polish
 - Migrated from 3D WebGL to 2D canvas
-- Implemented gooey SVG filter for drop merging
+- Implemented gooey SVG filter for lava lamp drop merging
 - Added Framer Motion for spring animations
 - Removed broken particle system
-- **Fixed projectile mechanics** - now correctly originate from exploding drop
-- **Enhanced projectile visuals** - larger (36px), slower (0.8s), red-to-blue color morph
-- Created proper initial grid state with random drops
+- **Fixed projectile mechanics** - now originate from exact cell center
+- **Premium 3D CSS styling** - glass highlights, multi-layer shadows, depth effects
+- **Lava lamp effect** - drops morph and merge fluidly
+- Red projectiles morph to blue during flight (0.7s animation)
 
 ---
 

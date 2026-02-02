@@ -7,11 +7,12 @@ interface Cell2DProps {
     col: number;
 }
 
-const COLORS: Record<number, string> = {
-    0: 'transparent',
-    1: '#4facfe', // Blue
-    2: '#a18cd1', // Purple
-    3: '#ff6b6b', // Red (softer)
+// Premium color palette with gradients
+const COLORS: Record<number, { main: string; light: string; dark: string }> = {
+    0: { main: 'transparent', light: 'transparent', dark: 'transparent' },
+    1: { main: '#4facfe', light: '#81c9ff', dark: '#2d8fd9' }, // Blue
+    2: { main: '#a18cd1', light: '#c9b8e8', dark: '#7a5fb0' }, // Purple  
+    3: { main: '#ff6b6b', light: '#ff9999', dark: '#e04545' }, // Red
 };
 
 export function Cell2D({ row, col }: Cell2DProps) {
@@ -27,14 +28,14 @@ export function Cell2D({ row, col }: Cell2DProps) {
 
     const size = useMemo(() => {
         if (value === 0) return 0;
-        return 30 + value * 8; // 38, 46, 54 px
+        return 32 + value * 6; // 38, 44, 50 px
     }, [value]);
 
-    const color = COLORS[value] || COLORS[0];
+    const palette = COLORS[value] || COLORS[0];
 
-    // Randomize wobble for each drop
-    const wobbleDuration = useMemo(() => 1.8 + Math.random() * 0.8, []);
-    const wobbleDelay = useMemo(() => Math.random() * 0.5, []);
+    // Randomize wobble for organic feel
+    const wobbleDuration = useMemo(() => 2.2 + Math.random() * 0.6, []);
+    const wobbleDelay = useMemo(() => Math.random() * 0.8, []);
 
     return (
         <div
@@ -45,8 +46,8 @@ export function Cell2D({ row, col }: Cell2DProps) {
                 alignItems: 'center',
                 aspectRatio: '1',
                 cursor: 'pointer',
-                minWidth: 40,
-                minHeight: 40,
+                minWidth: 50,
+                minHeight: 50,
             }}
             onClick={handleTap}
         >
@@ -58,13 +59,13 @@ export function Cell2D({ row, col }: Cell2DProps) {
                         animate={{
                             scale: 1,
                             opacity: 1,
-                            y: [0, -3, 0, 3, 0],
-                            scaleX: [1, 1.03, 1, 0.97, 1],
-                            scaleY: [1, 0.97, 1, 1.03, 1],
+                            y: [0, -2, 0, 2, 0],
+                            scaleX: [1, 1.02, 1, 0.98, 1],
+                            scaleY: [1, 0.98, 1, 1.02, 1],
                         }}
-                        exit={{ scale: 0, opacity: 0 }}
-                        whileHover={{ scale: 1.15 }}
-                        whileTap={{ scale: 0.85 }}
+                        exit={{ scale: 1.5, opacity: 0 }} // Burst outward on exit
+                        whileHover={{ scale: 1.12, y: -2 }}
+                        whileTap={{ scale: 0.88 }}
                         onTapStart={() => setIsPressed(true)}
                         onTap={() => setIsPressed(false)}
                         onTapCancel={() => setIsPressed(false)}
@@ -72,12 +73,25 @@ export function Cell2D({ row, col }: Cell2DProps) {
                             width: size,
                             height: size,
                             borderRadius: '50%',
-                            background: `radial-gradient(circle at 30% 30%, ${color}, ${color}88)`,
-                            boxShadow: `0 4px 20px ${color}66, inset 0 -2px 10px rgba(0,0,0,0.2), inset 0 2px 10px rgba(255,255,255,0.3)`,
+                            position: 'relative',
+                            // Premium 3D gradient - lighter from top-left
+                            background: `
+                                radial-gradient(circle at 25% 25%, ${palette.light}ee, transparent 50%),
+                                radial-gradient(circle at 50% 50%, ${palette.main}, ${palette.dark})
+                            `,
+                            // Multi-layer shadow for depth
+                            boxShadow: `
+                                0 8px 25px ${palette.dark}55,
+                                0 4px 12px ${palette.main}44,
+                                inset 0 -4px 12px ${palette.dark}55,
+                                inset 0 4px 8px rgba(255,255,255,0.35)
+                            `,
+                            // Subtle border for glass effect
+                            border: `1px solid ${palette.light}44`,
                         }}
                         transition={{
-                            scale: { type: 'spring', stiffness: 500, damping: 20 },
-                            opacity: { duration: 0.2 },
+                            scale: { type: 'spring', stiffness: 400, damping: 18 },
+                            opacity: { duration: 0.25 },
                             y: { duration: wobbleDuration, repeat: Infinity, ease: 'easeInOut', delay: wobbleDelay },
                             scaleX: { duration: wobbleDuration, repeat: Infinity, ease: 'easeInOut', delay: wobbleDelay },
                             scaleY: { duration: wobbleDuration, repeat: Infinity, ease: 'easeInOut', delay: wobbleDelay },
@@ -88,3 +102,4 @@ export function Cell2D({ row, col }: Cell2DProps) {
         </div>
     );
 }
+

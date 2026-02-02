@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import type { Projectile } from '../store/gameStore';
 
@@ -8,61 +8,84 @@ interface Projectile2DProps {
 
 export function Projectile2D({ projectile }: Projectile2DProps) {
     const { start, end } = projectile;
-    const [gridRect, setGridRect] = useState<DOMRect | null>(null);
+    const [positions, setPositions] = useState<{ startX: number; startY: number; endX: number; endY: number } | null>(null);
+    const calculatedRef = useRef(false);
 
     useEffect(() => {
-        // Find the grid wrapper to get its actual position
+        if (calculatedRef.current) return;
+
+        // Find actual cell positions by querying the grid cells
         const gridWrapper = document.querySelector('.grid-wrapper');
-        if (gridWrapper) {
-            setGridRect(gridWrapper.getBoundingClientRect());
+        if (!gridWrapper) return;
+
+        const cells = gridWrapper.querySelectorAll('.cell-container');
+        const gridCols = 6;
+
+        // start[0] = col, start[1] = row
+        const startCellIndex = start[1] * gridCols + start[0];
+        const endCellIndex = end[1] * gridCols + end[0];
+
+        const startCell = cells[startCellIndex];
+        const endCell = cells[endCellIndex];
+
+        if (startCell && endCell) {
+            const startRect = startCell.getBoundingClientRect();
+            const endRect = endCell.getBoundingClientRect();
+
+            setPositions({
+                startX: startRect.left + startRect.width / 2,
+                startY: startRect.top + startRect.height / 2,
+                endX: endRect.left + endRect.width / 2,
+                endY: endRect.top + endRect.height / 2,
+            });
+            calculatedRef.current = true;
         }
-    }, []);
+    }, [start, end]);
 
-    if (!gridRect) return null;
+    if (!positions) return null;
 
-    // Cell dimensions from CSS
-    const cellSize = 50;
-    const gap = 12;
-
-    // Calculate positions within the grid
-    // start[0] = col, start[1] = row
-    const startX = gridRect.left + start[0] * (cellSize + gap) + cellSize / 2 + 16;
-    const startY = gridRect.top + start[1] * (cellSize + gap) + cellSize / 2 + 16;
-    const endX = gridRect.left + end[0] * (cellSize + gap) + cellSize / 2 + 16;
-    const endY = gridRect.top + end[1] * (cellSize + gap) + cellSize / 2 + 16;
+    const { startX, startY, endX, endY } = positions;
 
     return (
         <motion.div
             initial={{
                 left: startX,
                 top: startY,
-                scale: 0.8,
+                scale: 0.6,
                 opacity: 1,
-                background: 'radial-gradient(circle at 30% 30%, #ff6b6b, #ee5a5a)',
-                boxShadow: '0 0 25px rgba(255, 107, 107, 0.9), 0 0 50px rgba(255, 107, 107, 0.5)',
             }}
             animate={{
                 left: endX,
                 top: endY,
-                scale: [0.8, 1.2, 1],
-                background: 'radial-gradient(circle at 30% 30%, #4facfe, #00c6fb)',
-                boxShadow: '0 0 25px rgba(79, 172, 254, 0.9), 0 0 50px rgba(79, 172, 254, 0.5)',
+                scale: [0.6, 1.1, 0.9],
             }}
             transition={{
-                duration: 0.8, // Slower for visibility
-                ease: [0.25, 0.1, 0.25, 1],
+                duration: 0.7,
+                ease: [0.34, 1.56, 0.64, 1], // Spring-like bounce
             }}
             style={{
                 position: 'fixed',
-                width: 36,
-                height: 36,
+                width: 32,
+                height: 32,
                 borderRadius: '50%',
+                // Lava lamp style - glossy red morphing to blue
+                background: `
+                    radial-gradient(circle at 30% 30%, #ff9999ee, transparent 50%),
+                    radial-gradient(circle at 50% 50%, #ff6b6b, #e04545)
+                `,
+                boxShadow: `
+                    0 0 30px rgba(255, 107, 107, 0.8),
+                    0 0 60px rgba(255, 107, 107, 0.4),
+                    inset 0 2px 8px rgba(255,255,255,0.4)
+                `,
                 pointerEvents: 'none',
                 zIndex: 1000,
                 transform: 'translate(-50%, -50%)',
+                filter: 'url(#goo)', // Apply goo filter for lava lamp effect
             }}
         />
     );
 }
+
 
 
