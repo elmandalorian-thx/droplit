@@ -72,10 +72,10 @@ export function Projectile2D({ projectile }: Projectile2DProps) {
                 width: 28,
                 height: 28,
                 borderRadius: '50%',
-                // Blue gradient to blend with target drop
-                background: 'radial-gradient(circle at 30% 30%, #81c9ff, #4facfe)',
+                // Teal gradient to blend with target drops
+                background: 'radial-gradient(circle at 30% 30%, #5effdb, #00d4aa)',
                 // Simplified shadow for GPU performance
-                boxShadow: '0 0 12px rgba(79, 172, 254, 0.6)',
+                boxShadow: '0 0 12px rgba(0, 212, 170, 0.6)',
                 pointerEvents: 'none',
                 zIndex: 1000,
                 marginLeft: -14,

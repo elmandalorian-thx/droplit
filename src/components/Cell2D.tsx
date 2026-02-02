@@ -7,12 +7,12 @@ interface Cell2DProps {
     col: number;
 }
 
-// Premium color palette with gradients
+// Distinct color palette - clear progression from cool to hot
 const COLORS: Record<number, { main: string; light: string; dark: string }> = {
     0: { main: 'transparent', light: 'transparent', dark: 'transparent' },
-    1: { main: '#4facfe', light: '#81c9ff', dark: '#2d8fd9' }, // Blue
-    2: { main: '#a18cd1', light: '#c9b8e8', dark: '#7a5fb0' }, // Purple  
-    3: { main: '#ff6b6b', light: '#ff9999', dark: '#e04545' }, // Red
+    1: { main: '#00d4aa', light: '#5effdb', dark: '#00a888' }, // Teal/Cyan
+    2: { main: '#ffb347', light: '#ffd699', dark: '#e69520' }, // Orange/Amber
+    3: { main: '#ff4757', light: '#ff7f8a', dark: '#d63040' }, // Red/Coral
 };
 
 export function Cell2D({ row, col }: Cell2DProps) {
