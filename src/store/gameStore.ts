@@ -41,6 +41,7 @@ interface GameState {
     resolveProjectiles: (projectiles: Projectile[]) => void;
     checkWinCondition: () => void;
     resetGame: () => void;
+    initializeLevel: (config: { dropsAvailable: number; emptyCells: number; redRatio: number; orangeRatio: number }) => void;
 
     // Powerup Actions
     selectPowerup: (type: 'rain' | null) => void;
@@ -259,6 +260,47 @@ export const useGameStore = create<GameState>((set, get) => ({
         powerups: { rain: 3 },
         activePowerup: null,
     })),
+
+    initializeLevel: (config: { dropsAvailable: number; emptyCells: number; redRatio: number; orangeRatio: number }) => {
+        const totalCells = GRID_ROWS * GRID_COLS;
+        const filledCells = totalCells - config.emptyCells;
+
+        // Calculate how many of each type
+        const redCount = Math.floor(filledCells * config.redRatio);
+        const orangeCount = Math.floor(filledCells * config.orangeRatio);
+        const tealCount = filledCells - redCount - orangeCount;
+
+        // Create array of cell values
+        const cells: CellValue[] = [
+            ...Array(redCount).fill(3),
+            ...Array(orangeCount).fill(2),
+            ...Array(tealCount).fill(1),
+            ...Array(config.emptyCells).fill(0),
+        ] as CellValue[];
+
+        // Shuffle using Fisher-Yates
+        for (let i = cells.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [cells[i], cells[j]] = [cells[j], cells[i]];
+        }
+
+        // Convert to 2D grid
+        const grid: GridState = [];
+        for (let r = 0; r < GRID_ROWS; r++) {
+            grid.push(cells.slice(r * GRID_COLS, (r + 1) * GRID_COLS));
+        }
+
+        set({
+            grid,
+            dropsAvailable: config.dropsAvailable,
+            status: 'playing',
+            projectiles: [],
+            explosions: [],
+            isProcessing: false,
+            powerups: { rain: 1 }, // 1 use per powerup per level
+            activePowerup: null,
+        });
+    },
 
     // Powerup actions
     selectPowerup: (type: 'rain' | null) => set({ activePowerup: type }),

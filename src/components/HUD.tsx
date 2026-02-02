@@ -3,9 +3,10 @@ import { useGameStore } from '../store/gameStore'
 interface HUDProps {
     onBackToMenu?: () => void;
     playerName?: string;
+    currentLevel?: number;
 }
 
-export function HUD({ onBackToMenu, playerName }: HUDProps) {
+export function HUD({ onBackToMenu, playerName, currentLevel }: HUDProps) {
     const { dropsAvailable, status, resetGame } = useGameStore();
 
     return (
@@ -46,7 +47,7 @@ export function HUD({ onBackToMenu, playerName }: HUDProps) {
                     </button>
                 )}
 
-                {/* Drops Counter - Center */}
+                {/* Level & Drops Counter - Center */}
                 <div style={{
                     position: 'absolute',
                     left: '50%',
@@ -54,8 +55,14 @@ export function HUD({ onBackToMenu, playerName }: HUDProps) {
                     background: 'rgba(0,0,0,0.5)',
                     padding: '10px 20px',
                     borderRadius: '20px',
-                    backdropFilter: 'blur(5px)'
+                    backdropFilter: 'blur(5px)',
+                    display: 'flex',
+                    gap: '16px',
+                    alignItems: 'center',
                 }}>
+                    {currentLevel && (
+                        <span style={{ fontSize: '0.875rem', opacity: 0.7 }}>Level {currentLevel}</span>
+                    )}
                     <h2 style={{ margin: 0, fontSize: '1.5rem' }}>Drops: {dropsAvailable}</h2>
                 </div>
 
