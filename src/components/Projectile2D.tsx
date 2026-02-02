@@ -29,8 +29,14 @@ export function Projectile2D({ projectile }: Projectile2DProps) {
         const endCell = cells[endCellIndex];
 
         if (startCell && endCell) {
-            const startRect = startCell.getBoundingClientRect();
-            const endRect = endCell.getBoundingClientRect();
+            // Try to find the actual drop element inside the cell (the motion.div with the gradient)
+            // The drop is the first child div inside cell-container
+            const startDrop = startCell.querySelector('div');
+            const endDrop = endCell.querySelector('div');
+
+            // Use drop position if found, otherwise fall back to cell center
+            const startRect = startDrop ? startDrop.getBoundingClientRect() : startCell.getBoundingClientRect();
+            const endRect = endDrop ? endDrop.getBoundingClientRect() : endCell.getBoundingClientRect();
 
             setPositions({
                 startX: startRect.left + startRect.width / 2,
@@ -51,22 +57,22 @@ export function Projectile2D({ projectile }: Projectile2DProps) {
             initial={{
                 left: startX,
                 top: startY,
-                scale: 0.6,
+                scale: 0.5,
                 opacity: 1,
             }}
             animate={{
                 left: endX,
                 top: endY,
-                scale: [0.6, 1.1, 0.9],
+                scale: [0.5, 1.0, 0.85],
             }}
             transition={{
-                duration: 0.7,
-                ease: [0.34, 1.56, 0.64, 1], // Spring-like bounce
+                duration: 0.6,
+                ease: [0.25, 0.1, 0.25, 1],
             }}
             style={{
                 position: 'fixed',
-                width: 32,
-                height: 32,
+                width: 28,
+                height: 28,
                 borderRadius: '50%',
                 // Lava lamp style - glossy red morphing to blue
                 background: `
@@ -74,18 +80,18 @@ export function Projectile2D({ projectile }: Projectile2DProps) {
                     radial-gradient(circle at 50% 50%, #ff6b6b, #e04545)
                 `,
                 boxShadow: `
-                    0 0 30px rgba(255, 107, 107, 0.8),
-                    0 0 60px rgba(255, 107, 107, 0.4),
-                    inset 0 2px 8px rgba(255,255,255,0.4)
+                    0 0 25px rgba(255, 107, 107, 0.8),
+                    0 0 50px rgba(255, 107, 107, 0.4),
+                    inset 0 2px 6px rgba(255,255,255,0.4)
                 `,
                 pointerEvents: 'none',
                 zIndex: 1000,
                 transform: 'translate(-50%, -50%)',
-                filter: 'url(#goo)', // Apply goo filter for lava lamp effect
             }}
         />
     );
 }
+
 
 
 
