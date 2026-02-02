@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGameStore } from '../store/gameStore';
+import { soundManager } from '../utils/SoundManager';
 
 interface Cell2DProps {
     row: number;
@@ -21,18 +22,27 @@ export function Cell2D({ row, col }: Cell2DProps) {
     const isProcessing = useGameStore(state => state.isProcessing);
     const activePowerup = useGameStore(state => state.activePowerup);
     const useRainPowerup = useGameStore(state => state.useRainPowerup);
+    const useBombPowerup = useGameStore(state => state.useBombPowerup);
+    const useLaserPowerup = useGameStore(state => state.useLaserPowerup);
     const [_, setIsPressed] = useState(false);
 
     const handleTap = useCallback(() => {
         if (isProcessing) return;
 
-        // If rain powerup is active, use it instead of normal drop
+        soundManager.playDrip();
+
+        // Handle powerups
         if (activePowerup === 'rain') {
             useRainPowerup(row, col);
+        } else if (activePowerup === 'bomb') {
+            useBombPowerup(row, col);
+        } else if (activePowerup === 'laser') {
+            // Default to clearing row for now
+            useLaserPowerup(row, col, 'row');
         } else {
             addDrop(row, col);
         }
-    }, [addDrop, row, col, isProcessing, activePowerup, useRainPowerup]);
+    }, [addDrop, row, col, isProcessing, activePowerup, useRainPowerup, useBombPowerup, useLaserPowerup]);
 
     const size = useMemo(() => {
         if (value === 0) return 0;

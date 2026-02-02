@@ -1,18 +1,28 @@
-import { useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import { useGameStore, GRID_ROWS, GRID_COLS } from '../store/gameStore';
 import { Cell2D } from './Cell2D';
 import { Projectile2D } from './Projectile2D';
-import { PowerupsBar } from './PowerupsBar';
+import { soundManager } from '../utils/SoundManager';
 import './GameContainer.css';
 
 export function GameContainer() {
     const projectiles = useGameStore(state => state.projectiles);
+    const explosions = useGameStore(state => state.explosions);
     const resetGame = useGameStore(state => state.resetGame);
+    const prevExplosionCount = useRef(0);
 
     // Initialize game on mount
     useEffect(() => {
         resetGame();
     }, [resetGame]);
+
+    // Play sound on new explosions
+    useEffect(() => {
+        if (explosions.length > prevExplosionCount.current) {
+            soundManager.playExplosion();
+        }
+        prevExplosionCount.current = explosions.length;
+    }, [explosions]);
 
     // Generate cell positions
     const cells = [];
@@ -54,8 +64,7 @@ export function GameContainer() {
                 ))}
             </div>
 
-            {/* Powerups Bar */}
-            <PowerupsBar />
+
         </div>
     );
 }

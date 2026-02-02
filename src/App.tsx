@@ -1,21 +1,24 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { GameContainer } from './components/GameContainer'
 import { HUD } from './components/HUD'
 import { WelcomeScreen } from './components/screens/WelcomeScreen'
 import { LevelTransition } from './components/screens/LevelTransition'
+import { LeaderboardScreen } from './components/screens/LeaderboardScreen'
 import { WaterBackground } from './components/effects/WaterBackground'
 import { useProfileStore } from './store/profileStore'
 import { useLevelStore } from './store/levelStore'
 import { useGameStore } from './store/gameStore'
+import { soundManager } from './utils/SoundManager'
 
-type GameScreen = 'welcome' | 'levelTransition' | 'playing'
+type GameScreen = 'welcome' | 'levelTransition' | 'playing' | 'leaderboard'
 
 function App() {
   const [screen, setScreen] = useState<GameScreen>('welcome')
   const activeProfile = useProfileStore(state => state.getActiveProfile())
   const updateStats = useProfileStore(state => state.updateStats)
   const { currentLevel, levelConfig, advanceLevel, resetToLevel } = useLevelStore()
-  const { status, initializeLevel } = useGameStore()
+  const { status, initializeLevel, currentCombo, dropsAvailable } = useGameStore()
+  const prevDropsRef = useRef(dropsAvailable)
 
   const handleStartGame = () => {
     if (activeProfile) {
@@ -48,15 +51,50 @@ function App() {
       })
 
       // Advance to next level
+      soundManager.playLevelUp()
       setTimeout(() => {
         advanceLevel()
         setScreen('levelTransition')
       }, 1500) // Brief delay to show "LEVEL CLEARED"
     }
+
+    if (status === 'lost' && screen === 'playing') {
+      soundManager.playGameOver()
+      updateStats({
+        gamesPlayed: (activeProfile?.stats.gamesPlayed || 0) + 1,
+      })
+    }
   }, [status])
 
+  // Track drops used
+  useEffect(() => {
+    // Only count if playing and drops decreased (consumed)
+    if (screen === 'playing' && dropsAvailable < prevDropsRef.current) {
+      updateStats({
+        totalDropsUsed: (activeProfile?.stats.totalDropsUsed || 0) + (prevDropsRef.current - dropsAvailable)
+      })
+    }
+    prevDropsRef.current = dropsAvailable
+  }, [dropsAvailable, screen])
+
+  // Watch for best combo
+  useEffect(() => {
+    if (activeProfile && currentCombo > activeProfile.stats.bestCombo) {
+      updateStats({ bestCombo: currentCombo })
+    }
+  }, [currentCombo])
+
   if (screen === 'welcome') {
-    return <WelcomeScreen onStartGame={handleStartGame} />
+    return (
+      <WelcomeScreen
+        onStartGame={handleStartGame}
+        onShowLeaderboard={() => setScreen('leaderboard')}
+      />
+    )
+  }
+
+  if (screen === 'leaderboard') {
+    return <LeaderboardScreen onBack={() => setScreen('welcome')} />
   }
 
   if (screen === 'levelTransition') {

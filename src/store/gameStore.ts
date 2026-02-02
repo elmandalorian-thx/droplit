@@ -40,6 +40,7 @@ interface GameState {
     };
     activePowerup: 'rain' | 'freeze' | 'bomb' | 'laser' | null;
     isFrozen: boolean; // For freeze powerup
+    currentCombo: number; // Track current chain length
 
     // Actions
     addDrop: (row: number, col: number) => void;
@@ -127,22 +128,28 @@ export const useGameStore = create<GameState>((set, get) => ({
     projectiles: [],
     explosions: [],
     isProcessing: false,
-
     // Powerups state - 1 use per powerup per level
     powerups: { rain: 1, freeze: 0, bomb: 0, laser: 0 },
     activePowerup: null,
     isFrozen: false,
+    currentCombo: 0,
 
     addDrop: (row: number, col: number) => {
         const state = get();
         if (state.status !== 'playing' || state.isProcessing) return;
-        if (state.dropsAvailable <= 0) return;
+        if (state.dropsAvailable <= 0 && !state.isFrozen) return; // Allow if frozen (free move)
 
-        const newDropsAvailable = state.dropsAvailable - 1;
+        const newDropsAvailable = state.isFrozen ? state.dropsAvailable : state.dropsAvailable - 1;
+
         let newGrid = state.grid.map(r => [...r]);
         newGrid[row][col] += 1;
 
-        set({ grid: newGrid, dropsAvailable: newDropsAvailable });
+        set({
+            grid: newGrid,
+            dropsAvailable: newDropsAvailable,
+            isFrozen: false, // Consume freeze status
+            currentCombo: 0 // Reset combo on new move
+        });
 
         if (newGrid[row][col] > 3) {
             get().triggerChainReaction(row, col);
@@ -182,71 +189,63 @@ export const useGameStore = create<GameState>((set, get) => ({
     },
 
     resolveProjectiles: (completedProjectiles: Projectile[]) => {
-        const state = get();
-        const remaining = state.projectiles.filter(p => !completedProjectiles.some(cp => cp.id === p.id));
-        set({ projectiles: remaining });
+        try {
+            const state = get();
+            const remaining = state.projectiles.filter(p => !completedProjectiles.some(cp => cp.id === p.id));
+            set({ projectiles: remaining });
 
-        let newGrid = state.grid.map(r => [...r]);
-        let nextExplosions: [number, number][] = [];
-        const newVisualExplosions: Explosion[] = [];
+            let newGrid = state.grid.map(r => [...r]);
+            let nextExplosions: [number, number][] = [];
+            const newVisualExplosions: Explosion[] = [];
 
-        // Only merge projectiles that have actual targets
-        completedProjectiles.filter(p => p.hasTarget).forEach(p => {
-            const [r, c] = p.targetPos;
-            // Ensure we're within bounds (safety check)
-            if (isValid(r, c)) {
-                newGrid[r][c] += 1;
+            // Only merge projectiles that have actual targets
+            completedProjectiles.filter(p => p.hasTarget).forEach(p => {
+                const [r, c] = p.targetPos;
+                // Ensure we're within bounds (safety check)
+                if (isValid(r, c)) {
+                    newGrid[r][c] += 1;
 
-                // Add visual explosion at point of impact
-                newVisualExplosions.push({
-                    id: Math.random().toString(),
-                    position: [r, c]
+                    // Add visual explosion at point of impact
+                    newVisualExplosions.push({
+                        id: Math.random().toString(),
+                        position: [r, c]
+                    });
+
+                    if (newGrid[r][c] > 3) {
+                        nextExplosions.push([r, c]);
+                    }
+                }
+            });
+
+            set(state => ({
+                grid: newGrid,
+                explosions: [...state.explosions, ...newVisualExplosions]
+            }));
+
+            // Auto-remove explosions after delay
+            if (newVisualExplosions.length > 0) {
+                setTimeout(() => {
+                    set(state => ({
+                        explosions: state.explosions.filter(e => !newVisualExplosions.some(ne => ne.id === e.id))
+                    }));
+                }, 1000);
+            }
+
+            if (nextExplosions.length > 0) {
+                // Fix: Process ALL simultaneous explosions
+                nextExplosions.forEach(([r, c]) => {
+                    get().triggerChainReaction(r, c);
                 });
 
-                if (newGrid[r][c] > 3) {
-                    nextExplosions.push([r, c]);
-                }
+                // Increment combo
+                set(state => ({ currentCombo: state.currentCombo + nextExplosions.length }));
+            } else {
+                // No more explosions in this step
+                get().checkWinCondition();
             }
-        });
-
-        set(state => ({
-            grid: newGrid,
-            explosions: [...state.explosions, ...newVisualExplosions]
-        }));
-
-        // Auto-remove explosions after delay (handled by component or here?)
-        // Let's remove them here to keep state clean, but component needs time to render.
-        // Let's set a timeout to remove them from state.
-        if (newVisualExplosions.length > 0) {
-            setTimeout(() => {
-                set(state => ({
-                    explosions: state.explosions.filter(e => !newVisualExplosions.some(ne => ne.id === e.id))
-                }));
-            }, 1000);
-        }
-
-        if (nextExplosions.length > 0) {
-            // Only process the first explosion to keep chain reaction distinct/sequential?
-            // Or loop? Let's loop but we need to match the async nature.
-            // Actually, if we just call triggerChainReaction for the FIRST one, 
-            // the others remain > 3 and will be processed later? 
-            // No, `triggerChainReaction` logic relies on finding targets in the CURRENT grid.
-            // If we have multiple explosions, we should ideally explode them all simultaneously.
-            // But that's complex for the `projectiles` logic (directions might overlap?).
-
-            // Let's explode the FIRST one. The others will be picked up? 
-            // No, the system only recurses if we call it.
-            // Simple approach: Pick first. 
-            // Once that recursion finishes, we need to check if any others are ripe?
-            // "Depth First".
-            get().triggerChainReaction(nextExplosions[0][0], nextExplosions[0][1]);
-
-            // NOTE: This misses other simultaneous explosions.
-            // Ideally we'd modify triggerChainReaction to take a LIST of explosions.
-            // For now, let's stick to simple Depth First. It matches the "Combo" feel.
-        } else {
-            set({ isProcessing: false });
-            get().checkWinCondition();
+        } catch (e) {
+            console.error("Game loop error:", e);
+            set({ isProcessing: false }); // Prevent lock
         }
     },
 
@@ -271,6 +270,7 @@ export const useGameStore = create<GameState>((set, get) => ({
         powerups: { rain: 1, freeze: 0, bomb: 0, laser: 0 },
         activePowerup: null,
         isFrozen: false,
+        currentCombo: 0,
     })),
 
     initializeLevel: (config: { dropsAvailable: number; emptyCells: number; redRatio: number; orangeRatio: number }, level: number) => {
@@ -320,6 +320,7 @@ export const useGameStore = create<GameState>((set, get) => ({
             powerups,
             activePowerup: null,
             isFrozen: false,
+            currentCombo: 0,
         });
     },
 

@@ -6,9 +6,10 @@ import './WelcomeScreen.css';
 
 interface WelcomeScreenProps {
     onStartGame: () => void;
+    onShowLeaderboard: () => void;
 }
 
-export function WelcomeScreen({ onStartGame }: WelcomeScreenProps) {
+export function WelcomeScreen({ onStartGame, onShowLeaderboard }: WelcomeScreenProps) {
     const { profiles, activeProfileId, createProfile, selectProfile, deleteProfile } = useProfileStore();
     const [isCreating, setIsCreating] = useState(false);
     const [newName, setNewName] = useState('');
@@ -188,16 +189,29 @@ export function WelcomeScreen({ onStartGame }: WelcomeScreenProps) {
                     </div>
                 </div>
 
-                {/* Start Game Button */}
-                <motion.button
-                    className="start-btn"
-                    onClick={handleStartGame}
-                    disabled={!activeProfileId}
-                    whileHover={{ scale: activeProfileId ? 1.05 : 1 }}
-                    whileTap={{ scale: activeProfileId ? 0.95 : 1 }}
-                >
-                    ▶ Start Game
-                </motion.button>
+                <div style={{ display: 'flex', gap: '16px', marginTop: '16px' }}>
+                    <motion.button
+                        className="start-btn"
+                        onClick={handleStartGame}
+                        disabled={!activeProfileId}
+                        whileHover={{ scale: activeProfileId ? 1.05 : 1 }}
+                        whileTap={{ scale: activeProfileId ? 0.95 : 1 }}
+                        style={{ flex: 2 }}
+                    >
+                        ▶ Start Game
+                    </motion.button>
+
+                    <motion.button
+                        className="start-btn"
+                        onClick={onShowLeaderboard}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        style={{ flex: 1, background: 'rgba(255,255,255,0.1)', fontSize: '1.5rem', padding: '16px' }}
+                        title="Leaderboard"
+                    >
+                        🏆
+                    </motion.button>
+                </div>
 
                 {/* Quick tip */}
                 {!activeProfileId && profiles.length === 0 && (
