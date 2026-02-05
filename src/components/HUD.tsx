@@ -17,106 +17,130 @@ export function HUD({ onBackToMenu, playerName, currentLevel }: HUDProps) {
             left: 0,
             width: '100%',
             height: '100%',
-            pointerEvents: 'none', // Allow clicking through to canvas
+            pointerEvents: 'none',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
-            padding: '20px',
+            padding: '20px 20px calc(20px + var(--safe-bottom, 0px) + 24px) 20px',
             boxSizing: 'border-box',
-            color: 'white',
-            fontFamily: 'Inter, sans-serif'
+            color: 'var(--zen-text, rgba(200, 215, 230, 0.9))',
+            fontFamily: "'Inter', sans-serif"
         }}>
             {/* Top Bar */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                {/* Menu Button */}
                 {onBackToMenu && (
                     <button
                         onClick={onBackToMenu}
                         style={{
                             pointerEvents: 'auto',
-                            background: 'rgba(0,0,0,0.5)',
+                            background: 'rgba(11, 17, 32, 0.7)',
                             padding: '8px 16px',
                             borderRadius: '12px',
-                            backdropFilter: 'blur(5px)',
-                            border: '1px solid rgba(255,255,255,0.1)',
-                            color: 'white',
+                            backdropFilter: 'blur(12px)',
+                            border: '1px solid rgba(100, 150, 180, 0.12)',
+                            color: 'rgba(200, 215, 230, 0.7)',
                             cursor: 'pointer',
                             fontSize: '0.875rem',
+                            transition: 'all 0.2s ease',
                         }}
                     >
-                        ← Menu
+                        Menu
                     </button>
                 )}
 
-                {/* Level & Drops Counter - Center */}
+                {/* Level & Drops Counter */}
                 <div style={{
                     position: 'absolute',
                     left: '50%',
                     transform: 'translateX(-50%)',
-                    background: 'rgba(0,0,0,0.5)',
-                    padding: '10px 20px',
+                    background: 'rgba(11, 17, 32, 0.7)',
+                    padding: '10px 24px',
                     borderRadius: '20px',
-                    backdropFilter: 'blur(5px)',
+                    backdropFilter: 'blur(12px)',
+                    border: '1px solid rgba(100, 150, 180, 0.1)',
                     display: 'flex',
                     gap: '16px',
                     alignItems: 'center',
                 }}>
                     {currentLevel && (
-                        <span style={{ fontSize: '0.875rem', opacity: 0.7 }}>Level {currentLevel}</span>
+                        <span style={{ fontSize: '0.8rem', color: 'rgba(160, 180, 200, 0.5)', letterSpacing: '1px', textTransform: 'uppercase' as const }}>Lv {currentLevel}</span>
                     )}
-                    <h2 style={{ margin: 0, fontSize: '1.5rem' }}>Drops: {dropsAvailable}</h2>
+                    <span style={{ margin: 0, fontSize: '1.25rem', fontWeight: 600, color: 'rgba(200, 215, 230, 0.9)', letterSpacing: '0.5px' }}>{dropsAvailable}</span>
+                    <span style={{ fontSize: '0.75rem', color: 'rgba(160, 180, 200, 0.4)', marginLeft: '-10px' }}>drops</span>
                 </div>
 
-                {/* Player Name */}
                 {playerName && (
                     <div style={{
-                        background: 'rgba(0,0,0,0.5)',
+                        background: 'rgba(11, 17, 32, 0.7)',
                         padding: '8px 16px',
                         borderRadius: '12px',
-                        backdropFilter: 'blur(5px)',
-                        fontSize: '0.875rem',
+                        backdropFilter: 'blur(12px)',
+                        border: '1px solid rgba(100, 150, 180, 0.1)',
+                        fontSize: '0.8rem',
+                        color: 'rgba(160, 180, 200, 0.6)',
                     }}>
-                        👤 {playerName}
+                        {playerName}
                     </div>
                 )}
             </div>
 
-            {/* Game Over / Win Modal */}
+            {/* Game Over / Win Modal - Zen styled */}
             {status !== 'playing' && (
                 <div style={{
                     position: 'absolute',
                     top: '50%',
                     left: '50%',
                     transform: 'translate(-50%, -50%)',
-                    background: 'rgba(255,255,255,0.9)',
-                    padding: '40px',
-                    borderRadius: '20px',
+                    background: 'rgba(11, 17, 32, 0.92)',
+                    padding: '48px 40px',
+                    borderRadius: '24px',
                     textAlign: 'center',
-                    color: '#333',
-                    pointerEvents: 'auto', // Re-enable clicks
-                    boxShadow: '0 10px 30px rgba(0,0,0,0.3)'
+                    color: 'rgba(200, 215, 230, 0.9)',
+                    pointerEvents: 'auto',
+                    backdropFilter: 'blur(20px)',
+                    border: '1px solid rgba(100, 150, 180, 0.15)',
+                    boxShadow: '0 20px 60px rgba(0, 0, 0, 0.4)',
+                    minWidth: '280px',
                 }}>
-                    <h1 style={{ margin: '0 0 20px 0', fontSize: '3rem' }}>
-                        {status === 'won' ? 'LEVEL CLEARED!' : 'OUT OF DROPS'}
+                    <h1 style={{
+                        margin: '0 0 12px 0',
+                        fontSize: '1.75rem',
+                        fontWeight: 700,
+                        letterSpacing: '2px',
+                        color: status === 'won' ? '#6ec6d8' : 'rgba(200, 215, 230, 0.6)',
+                    }}>
+                        {status === 'won' ? 'Cleared' : 'No Drops Left'}
                     </h1>
-                    <p style={{ fontSize: '1.2rem', marginBottom: '30px' }}>
-                        {status === 'won' ? 'Splendid work!' : 'Better luck next time.'}
+                    <p style={{
+                        fontSize: '1rem',
+                        marginBottom: '32px',
+                        color: 'rgba(160, 180, 200, 0.5)',
+                        fontStyle: 'italic',
+                    }}>
+                        {status === 'won' ? 'Well played.' : 'Try a different approach.'}
                     </p>
                     <button
                         onClick={resetGame}
                         style={{
-                            padding: '15px 40px',
-                            fontSize: '1.2rem',
-                            background: '#4facfe',
-                            color: 'white',
-                            border: 'none',
+                            padding: '14px 40px',
+                            fontSize: '1rem',
+                            fontWeight: 600,
+                            background: 'rgba(94, 173, 207, 0.15)',
+                            color: '#5eadcf',
+                            border: '1px solid rgba(94, 173, 207, 0.3)',
                             borderRadius: '50px',
                             cursor: 'pointer',
-                            transition: 'transform 0.1s',
-                            boxShadow: '0 5px 15px rgba(79, 172, 254, 0.4)'
+                            transition: 'all 0.3s ease',
+                            letterSpacing: '1px',
                         }}
-                        onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-                        onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                        onMouseOver={(e) => {
+                            e.currentTarget.style.background = 'rgba(94, 173, 207, 0.25)';
+                            e.currentTarget.style.transform = 'scale(1.03)';
+                        }}
+                        onMouseOut={(e) => {
+                            e.currentTarget.style.background = 'rgba(94, 173, 207, 0.15)';
+                            e.currentTarget.style.transform = 'scale(1)';
+                        }}
                     >
                         Try Again
                     </button>
@@ -125,12 +149,20 @@ export function HUD({ onBackToMenu, playerName, currentLevel }: HUDProps) {
 
             {/* Bottom controls */}
             <div style={{ pointerEvents: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-                {/* Powerups */}
                 {currentLevel && <PowerupBar currentLevel={currentLevel} />}
 
-                {/* Reset button */}
-                <button onClick={resetGame} style={{ background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.2)', color: 'white', padding: '8px 16px', borderRadius: '12px', cursor: 'pointer', backdropFilter: 'blur(5px)' }}>
-                    Reset Level
+                <button onClick={resetGame} style={{
+                    background: 'rgba(11, 17, 32, 0.7)',
+                    border: '1px solid rgba(100, 150, 180, 0.12)',
+                    color: 'rgba(160, 180, 200, 0.5)',
+                    padding: '8px 16px',
+                    borderRadius: '12px',
+                    cursor: 'pointer',
+                    backdropFilter: 'blur(12px)',
+                    fontSize: '0.8rem',
+                    transition: 'all 0.2s ease',
+                }}>
+                    Reset
                 </button>
             </div>
         </div>

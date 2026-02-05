@@ -1,64 +1,65 @@
 .powerup-bar {
     display: flex;
-    gap: 12px;
-    padding: 12px 16px;
-    background: rgba(0, 0, 0, 0.6);
+    gap: 10px;
+    padding: 10px 14px;
+    background: rgba(11, 17, 32, 0.7);
     border-radius: 16px;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(100, 150, 180, 0.1);
 }
 
 .powerup-btn {
     position: relative;
-    width: 52px;
-    height: 52px;
+    width: 48px;
+    height: 48px;
     border-radius: 12px;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(100, 150, 180, 0.12);
+    background: rgba(255, 255, 255, 0.04);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .powerup-btn:hover:not(.locked):not(.empty) {
-    border-color: rgba(0, 212, 170, 0.5);
-    background: rgba(0, 212, 170, 0.15);
+    border-color: rgba(94, 173, 207, 0.3);
+    background: rgba(94, 173, 207, 0.1);
 }
 
 .powerup-btn.active {
-    border-color: rgba(0, 212, 170, 0.8);
-    background: rgba(0, 212, 170, 0.25);
-    box-shadow: 0 0 20px rgba(0, 212, 170, 0.4);
+    border-color: rgba(94, 173, 207, 0.5);
+    background: rgba(94, 173, 207, 0.15);
+    box-shadow: 0 0 16px rgba(94, 173, 207, 0.15);
 }
 
 .powerup-btn.empty {
-    opacity: 0.4;
+    opacity: 0.35;
     cursor: not-allowed;
 }
 
 .powerup-btn.locked {
-    opacity: 0.3;
+    opacity: 0.2;
     cursor: not-allowed;
     filter: grayscale(1);
 }
 
 .powerup-icon {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
 }
 
 .powerup-count {
     position: absolute;
-    bottom: -4px;
-    right: -4px;
-    width: 20px;
-    height: 20px;
+    bottom: -3px;
+    right: -3px;
+    width: 18px;
+    height: 18px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #00d4aa, #00a888);
-    color: white;
-    font-size: 0.75rem;
-    font-weight: 700;
+    background: rgba(94, 173, 207, 0.3);
+    border: 1px solid rgba(94, 173, 207, 0.4);
+    color: rgba(200, 215, 230, 0.9);
+    font-size: 0.65rem;
+    font-weight: 600;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -68,22 +69,23 @@
     position: absolute;
     bottom: -4px;
     right: -4px;
-    font-size: 0.875rem;
+    font-size: 0.75rem;
+    opacity: 0.5;
 }
 
 /* Mobile */
 @media (max-width: 480px) {
     .powerup-bar {
-        gap: 8px;
-        padding: 8px 12px;
+        gap: 6px;
+        padding: 8px 10px;
     }
 
     .powerup-btn {
-        width: 44px;
-        height: 44px;
+        width: 42px;
+        height: 42px;
     }
 
     .powerup-icon {
-        font-size: 1.5rem;
+        font-size: 1.3rem;
     }
 }

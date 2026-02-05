@@ -36,19 +36,17 @@ export function WelcomeScreen({ onStartGame, onShowLeaderboard }: WelcomeScreenP
 
     return (
         <div className="welcome-screen">
-            {/* Animated background gradient */}
             <div className="welcome-bg" />
 
-            {/* Water ripple effects */}
             <div className="ripple-container">
-                {[...Array(5)].map((_, i) => (
+                {[...Array(4)].map((_, i) => (
                     <div
                         key={i}
                         className="ripple"
                         style={{
                             left: `${20 + Math.random() * 60}%`,
                             top: `${20 + Math.random() * 60}%`,
-                            animationDelay: `${i * 1.5}s`,
+                            animationDelay: `${i * 2}s`,
                         }}
                     />
                 ))}
@@ -56,22 +54,20 @@ export function WelcomeScreen({ onStartGame, onShowLeaderboard }: WelcomeScreenP
 
             <motion.div
                 className="welcome-content"
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
+                transition={{ duration: 0.8, ease: 'easeOut' }}
             >
-                {/* Logo */}
                 <motion.h1
                     className="welcome-title"
-                    initial={{ scale: 0.8 }}
-                    animate={{ scale: 1 }}
-                    transition={{ type: 'spring', stiffness: 200, damping: 15 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 1, delay: 0.2 }}
                 >
-                    🌊 DropLit 🌊
+                    droplit
                 </motion.h1>
-                <p className="welcome-subtitle">Chain Reaction Puzzle</p>
+                <p className="welcome-subtitle">chain reaction puzzle</p>
 
-                {/* Profile Selection */}
                 <div className="profile-section">
                     <h2 className="section-title">Select Player</h2>
 
@@ -90,16 +86,15 @@ export function WelcomeScreen({ onStartGame, onShowLeaderboard }: WelcomeScreenP
                                     <BlobbyAvatar
                                         seed={profile.avatarSeed}
                                         color={profile.avatarColor}
-                                        size={56}
+                                        size={48}
                                     />
                                     <div className="profile-info">
                                         <span className="profile-name">{profile.name}</span>
                                         <span className="profile-level">
-                                            🏆 Level {profile.stats.highestLevel || 1}
+                                            Level {profile.stats.highestLevel || 1}
                                         </span>
                                     </div>
 
-                                    {/* Delete button */}
                                     <button
                                         className="delete-btn"
                                         onClick={(e) => {
@@ -110,7 +105,6 @@ export function WelcomeScreen({ onStartGame, onShowLeaderboard }: WelcomeScreenP
                                         ✕
                                     </button>
 
-                                    {/* Delete confirmation */}
                                     {showDeleteConfirm === profile.id && (
                                         <motion.div
                                             className="delete-confirm"
@@ -137,7 +131,6 @@ export function WelcomeScreen({ onStartGame, onShowLeaderboard }: WelcomeScreenP
                             ))}
                         </AnimatePresence>
 
-                        {/* Add new profile button */}
                         {profiles.length < 5 && !isCreating && (
                             <motion.button
                                 className="add-profile-btn"
@@ -150,7 +143,6 @@ export function WelcomeScreen({ onStartGame, onShowLeaderboard }: WelcomeScreenP
                             </motion.button>
                         )}
 
-                        {/* New profile form */}
                         {isCreating && (
                             <motion.div
                                 className="new-profile-form"
@@ -189,33 +181,32 @@ export function WelcomeScreen({ onStartGame, onShowLeaderboard }: WelcomeScreenP
                     </div>
                 </div>
 
-                <div style={{ display: 'flex', gap: '16px', marginTop: '16px' }}>
+                <div style={{ display: 'flex', gap: '12px', marginTop: '16px', width: '100%' }}>
                     <motion.button
                         className="start-btn"
                         onClick={handleStartGame}
                         disabled={!activeProfileId}
-                        whileHover={{ scale: activeProfileId ? 1.05 : 1 }}
-                        whileTap={{ scale: activeProfileId ? 0.95 : 1 }}
+                        whileHover={{ scale: activeProfileId ? 1.03 : 1 }}
+                        whileTap={{ scale: activeProfileId ? 0.97 : 1 }}
                         style={{ flex: 2 }}
                     >
-                        ▶ Start Game
+                        Play
                     </motion.button>
 
                     <motion.button
                         className="start-btn"
                         onClick={onShowLeaderboard}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        style={{ flex: 1, background: 'rgba(255,255,255,0.1)', fontSize: '1.5rem', padding: '16px' }}
+                        whileHover={{ scale: 1.03 }}
+                        whileTap={{ scale: 0.97 }}
+                        style={{ flex: 1, padding: '16px' }}
                         title="Leaderboard"
                     >
-                        🏆
+                        Rankings
                     </motion.button>
                 </div>
 
-                {/* Quick tip */}
                 {!activeProfileId && profiles.length === 0 && (
-                    <p className="tip-text">Create a profile to get started!</p>
+                    <p className="tip-text">Create a profile to begin</p>
                 )}
             </motion.div>
         </div>

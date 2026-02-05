@@ -5,7 +5,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    background: transparent;
     overflow: hidden;
     touch-action: manipulation;
 }
@@ -14,10 +14,11 @@
     display: grid;
     grid-template-columns: repeat(6, 50px);
     grid-template-rows: repeat(8, 50px);
-    gap: 12px;
+    gap: 10px;
     padding: 16px;
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 20px;
+    border: 1px solid rgba(100, 150, 180, 0.06);
 }
 
 .projectiles-layer {
@@ -31,7 +32,7 @@
     .grid-wrapper {
         grid-template-columns: repeat(6, 40px);
         grid-template-rows: repeat(8, 40px);
-        gap: 8px;
-        padding: 12px;
+        gap: 6px;
+        padding: 10px;
     }
 }
