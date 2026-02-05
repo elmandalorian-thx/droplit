@@ -5,88 +5,44 @@
     justify-content: center;
     align-items: center;
     overflow: hidden;
+    background: #0b1120;
 }
 
-/* Animated gradient background */
 .welcome-bg {
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, #0b1120 0%, #101b2e 30%, #112238 60%, #0e1a2e 100%);
+    background: linear-gradient(135deg, #0b1120 0%, #101b2e 50%, #0e1a2e 100%);
     z-index: 0;
 }
 
-/* Water ripple effects */
-.ripple-container {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    z-index: 1;
-}
-
-.ripple {
-    position: absolute;
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    border: 1px solid rgba(94, 173, 207, 0.08);
-    animation: ripple-expand 8s ease-out infinite;
-}
-
-@keyframes ripple-expand {
-    0% {
-        transform: scale(0);
-        opacity: 0.5;
-    }
-
-    100% {
-        transform: scale(4);
-        opacity: 0;
-    }
-}
-
-/* Main content */
 .welcome-content {
     position: relative;
     z-index: 10;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 32px;
-    max-width: 420px;
+    padding: 40px 32px;
+    max-width: 400px;
     width: 100%;
 }
 
-/* Title */
 .welcome-title {
-    font-size: 2.75rem;
+    font-size: 2.5rem;
     font-weight: 300;
-    background: linear-gradient(135deg, #5eadcf 0%, #8cc5d8 50%, #5eadcf 100%);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin: 0 0 8px 0;
-    letter-spacing: 6px;
+    color: rgba(200, 215, 230, 0.8);
+    margin: 0 0 48px 0;
+    letter-spacing: 8px;
     text-transform: lowercase;
 }
 
-.welcome-subtitle {
-    color: rgba(160, 180, 200, 0.4);
-    font-size: 0.8rem;
-    margin: 0 0 48px 0;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    font-weight: 300;
-}
-
-/* Profile section */
 .profile-section {
     width: 100%;
     margin-bottom: 32px;
 }
 
 .section-title {
-    color: rgba(160, 180, 200, 0.45);
-    font-size: 0.75rem;
+    color: rgba(160, 180, 200, 0.35);
+    font-size: 0.7rem;
     font-weight: 400;
     text-transform: uppercase;
     letter-spacing: 3px;
@@ -97,32 +53,30 @@
 .profile-list {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
 }
 
-/* Profile card */
 .profile-card {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 14px;
     padding: 12px 16px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(100, 150, 180, 0.08);
-    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(100, 150, 180, 0.06);
+    border-radius: 14px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     position: relative;
 }
 
 .profile-card:hover {
-    background: rgba(94, 173, 207, 0.05);
-    border-color: rgba(94, 173, 207, 0.15);
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(100, 150, 180, 0.12);
 }
 
 .profile-card.active {
-    background: rgba(94, 173, 207, 0.08);
-    border-color: rgba(94, 173, 207, 0.25);
-    box-shadow: 0 0 24px rgba(94, 173, 207, 0.08);
+    background: rgba(94, 173, 207, 0.06);
+    border-color: rgba(94, 173, 207, 0.2);
 }
 
 .profile-info {
@@ -132,13 +86,13 @@
 }
 
 .profile-name {
-    color: rgba(200, 215, 230, 0.9);
-    font-size: 1.05rem;
+    color: rgba(200, 215, 230, 0.85);
+    font-size: 1rem;
     font-weight: 500;
 }
 
 .profile-level {
-    color: rgba(160, 180, 200, 0.4);
+    color: rgba(160, 180, 200, 0.35);
     font-size: 0.8rem;
 }
 
@@ -150,9 +104,9 @@
     width: 24px;
     height: 24px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.06);
+    background: transparent;
     border: none;
-    color: rgba(200, 215, 230, 0.3);
+    color: rgba(200, 215, 230, 0.25);
     font-size: 12px;
     cursor: pointer;
     opacity: 0;
@@ -164,21 +118,21 @@
 }
 
 .delete-btn:hover {
-    background: rgba(201, 123, 139, 0.2);
+    background: rgba(201, 123, 139, 0.15);
     color: #c97b8b;
 }
 
-/* Delete confirmation */
 .delete-confirm {
     position: absolute;
     inset: 0;
     background: rgba(11, 17, 32, 0.95);
-    border-radius: 16px;
+    border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 12px;
-    color: rgba(200, 215, 230, 0.8);
+    color: rgba(200, 215, 230, 0.7);
+    font-size: 0.9rem;
 }
 
 .confirm-yes,
@@ -188,20 +142,19 @@
     border: none;
     cursor: pointer;
     font-weight: 500;
+    font-size: 0.85rem;
 }
 
 .confirm-yes {
-    background: rgba(201, 123, 139, 0.3);
+    background: rgba(201, 123, 139, 0.2);
     color: #c97b8b;
-    border: 1px solid rgba(201, 123, 139, 0.3);
 }
 
 .confirm-no {
-    background: rgba(200, 215, 230, 0.1);
-    color: rgba(200, 215, 230, 0.6);
+    background: rgba(200, 215, 230, 0.08);
+    color: rgba(200, 215, 230, 0.5);
 }
 
-/* Add profile button */
 .add-profile-btn {
     display: flex;
     align-items: center;
@@ -209,17 +162,17 @@
     gap: 8px;
     padding: 14px;
     background: transparent;
-    border: 1px dashed rgba(100, 150, 180, 0.15);
-    border-radius: 16px;
-    color: rgba(160, 180, 200, 0.4);
+    border: 1px dashed rgba(100, 150, 180, 0.1);
+    border-radius: 14px;
+    color: rgba(160, 180, 200, 0.3);
     font-size: 0.9rem;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.2s;
 }
 
 .add-profile-btn:hover {
-    border-color: rgba(94, 173, 207, 0.3);
-    color: rgba(94, 173, 207, 0.7);
+    border-color: rgba(100, 150, 180, 0.2);
+    color: rgba(160, 180, 200, 0.5);
 }
 
 .add-icon {
@@ -227,34 +180,33 @@
     line-height: 1;
 }
 
-/* New profile form */
 .new-profile-form {
     display: flex;
     flex-direction: column;
     gap: 12px;
     padding: 16px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(94, 173, 207, 0.15);
-    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(100, 150, 180, 0.1);
+    border-radius: 14px;
 }
 
 .new-profile-form input {
     padding: 12px 16px;
-    background: rgba(11, 17, 32, 0.6);
-    border: 1px solid rgba(100, 150, 180, 0.12);
-    border-radius: 12px;
+    background: rgba(11, 17, 32, 0.5);
+    border: 1px solid rgba(100, 150, 180, 0.1);
+    border-radius: 10px;
     color: rgba(200, 215, 230, 0.9);
     font-size: 1rem;
     outline: none;
-    transition: border-color 0.3s;
+    transition: border-color 0.2s;
 }
 
 .new-profile-form input:focus {
-    border-color: rgba(94, 173, 207, 0.35);
+    border-color: rgba(94, 173, 207, 0.3);
 }
 
 .new-profile-form input::placeholder {
-    color: rgba(160, 180, 200, 0.3);
+    color: rgba(160, 180, 200, 0.25);
 }
 
 .form-buttons {
@@ -271,68 +223,72 @@
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s;
+    font-size: 0.9rem;
 }
 
 .btn-create {
-    background: rgba(94, 173, 207, 0.2);
-    color: #5eadcf;
-    border: 1px solid rgba(94, 173, 207, 0.25);
+    background: rgba(94, 173, 207, 0.15);
+    color: rgba(94, 173, 207, 0.8);
 }
 
 .btn-create:disabled {
-    opacity: 0.4;
+    opacity: 0.3;
     cursor: not-allowed;
 }
 
 .btn-cancel {
-    background: rgba(200, 215, 230, 0.08);
-    color: rgba(200, 215, 230, 0.5);
+    background: rgba(200, 215, 230, 0.06);
+    color: rgba(200, 215, 230, 0.4);
 }
 
-/* Start button */
 .start-btn {
-    padding: 16px 48px;
-    font-size: 1rem;
+    padding: 16px 40px;
+    font-size: 0.9rem;
     font-weight: 500;
-    background: rgba(94, 173, 207, 0.15);
-    border: 1px solid rgba(94, 173, 207, 0.3);
-    border-radius: 50px;
-    color: #5eadcf;
+    background: rgba(94, 173, 207, 0.1);
+    border: 1px solid rgba(94, 173, 207, 0.2);
+    border-radius: 14px;
+    color: rgba(94, 173, 207, 0.8);
     cursor: pointer;
-    box-shadow: 0 4px 24px rgba(94, 173, 207, 0.1);
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     text-transform: uppercase;
-    letter-spacing: 3px;
+    letter-spacing: 2px;
 }
 
 .start-btn:hover:not(:disabled) {
-    background: rgba(94, 173, 207, 0.22);
-    box-shadow: 0 8px 32px rgba(94, 173, 207, 0.15);
+    background: rgba(94, 173, 207, 0.16);
 }
 
 .start-btn:disabled {
-    opacity: 0.3;
+    opacity: 0.25;
     cursor: not-allowed;
-    box-shadow: none;
 }
 
-/* Tip text */
+.start-btn.secondary {
+    background: rgba(200, 215, 230, 0.04);
+    border-color: rgba(100, 150, 180, 0.1);
+    color: rgba(160, 180, 200, 0.5);
+    padding: 16px;
+}
+
+.start-btn.secondary:hover {
+    background: rgba(200, 215, 230, 0.08);
+}
+
 .tip-text {
-    color: rgba(160, 180, 200, 0.35);
+    color: rgba(160, 180, 200, 0.3);
     font-size: 0.8rem;
     margin-top: 16px;
     text-align: center;
-    font-style: italic;
 }
 
-/* Mobile adjustments */
 @media (max-width: 480px) {
     .welcome-title {
         font-size: 2rem;
     }
 
     .welcome-content {
-        padding: 24px 16px;
+        padding: 32px 20px;
     }
 
     .profile-card {

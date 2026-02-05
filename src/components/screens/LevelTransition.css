@@ -5,12 +5,13 @@
     justify-content: center;
     align-items: center;
     z-index: 100;
+    background: #0b1120;
 }
 
 .level-bg {
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, #0b1120 0%, #101b2e 50%, #112238 100%);
+    background: linear-gradient(135deg, #0b1120 0%, #101b2e 50%, #0e1a2e 100%);
 }
 
 .level-content {
@@ -21,42 +22,32 @@
     align-items: center;
     text-align: center;
     padding: 48px;
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(100, 150, 180, 0.08);
-    border-radius: 24px;
-    backdrop-filter: blur(12px);
-    min-width: 300px;
+    min-width: 280px;
 }
 
-/* Level Badge */
 .level-badge {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
 }
 
 .level-number {
-    font-size: 4rem;
+    font-size: 4.5rem;
     font-weight: 200;
-    color: rgba(94, 173, 207, 0.7);
+    color: rgba(200, 215, 230, 0.6);
     letter-spacing: 4px;
 }
 
-/* Difficulty Message */
 .level-message {
-    color: rgba(160, 180, 200, 0.45);
-    font-size: 1rem;
-    font-style: italic;
-    margin: 0 0 36px 0;
+    color: rgba(160, 180, 200, 0.3);
+    font-size: 0.85rem;
+    margin: 0 0 40px 0;
     font-weight: 300;
+    letter-spacing: 1px;
 }
 
-/* Stats Grid */
 .level-stats {
     display: flex;
     gap: 40px;
-    margin-bottom: 36px;
+    margin-bottom: 40px;
 }
 
 .stat-item {
@@ -67,46 +58,43 @@
 }
 
 .stat-value {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
     font-weight: 300;
-    color: rgba(200, 215, 230, 0.8);
+    color: rgba(200, 215, 230, 0.7);
 }
 
 .stat-label {
-    font-size: 0.7rem;
-    color: rgba(160, 180, 200, 0.4);
+    font-size: 0.65rem;
+    color: rgba(160, 180, 200, 0.3);
     text-transform: uppercase;
     letter-spacing: 2px;
 }
 
-/* Continue Button */
 .continue-btn {
     padding: 14px 48px;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 500;
-    background: rgba(94, 173, 207, 0.12);
-    border: 1px solid rgba(94, 173, 207, 0.25);
-    border-radius: 50px;
-    color: #5eadcf;
+    background: rgba(94, 173, 207, 0.08);
+    border: 1px solid rgba(94, 173, 207, 0.18);
+    border-radius: 14px;
+    color: rgba(94, 173, 207, 0.7);
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     text-transform: uppercase;
-    letter-spacing: 3px;
+    letter-spacing: 2px;
 }
 
 .continue-btn:hover {
-    background: rgba(94, 173, 207, 0.2);
+    background: rgba(94, 173, 207, 0.14);
 }
 
-/* Mobile */
 @media (max-width: 480px) {
     .level-content {
         padding: 32px 24px;
-        min-width: 260px;
     }
 
     .level-number {
-        font-size: 3rem;
+        font-size: 3.5rem;
     }
 
     .level-stats {
