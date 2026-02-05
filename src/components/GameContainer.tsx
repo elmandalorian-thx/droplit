@@ -8,13 +8,7 @@ import './GameContainer.css';
 export function GameContainer() {
     const projectiles = useGameStore(state => state.projectiles);
     const explosions = useGameStore(state => state.explosions);
-    const resetGame = useGameStore(state => state.resetGame);
     const prevExplosionCount = useRef(0);
-
-    // Initialize game on mount
-    useEffect(() => {
-        resetGame();
-    }, [resetGame]);
 
     // Play sound on new explosions
     useEffect(() => {
