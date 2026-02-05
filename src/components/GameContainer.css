@@ -16,6 +16,7 @@
     grid-template-rows: repeat(8, 50px);
     gap: 6px;
     padding: 12px;
+    filter: url(#goo);
 }
 
 .projectiles-layer {

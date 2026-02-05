@@ -60,3 +60,22 @@ body {
   50% { transform: scale(0.98) rotate(-1deg); }
   75% { transform: scale(1.01) rotate(0.5deg); }
 }
+
+/* Jelly morph animations - continuous organic shape shifting per drop type */
+@keyframes jelly-morph-1 {
+  0%, 100% { border-radius: 42% 58% 55% 45% / 53% 47% 52% 48%; }
+  33% { border-radius: 55% 45% 48% 52% / 47% 53% 45% 55%; }
+  66% { border-radius: 48% 52% 42% 58% / 55% 45% 53% 47%; }
+}
+
+@keyframes jelly-morph-2 {
+  0%, 100% { border-radius: 55% 45% 48% 52% / 47% 53% 55% 45%; }
+  33% { border-radius: 48% 52% 55% 45% / 53% 47% 48% 52%; }
+  66% { border-radius: 42% 58% 52% 48% / 48% 52% 55% 45%; }
+}
+
+@keyframes jelly-morph-3 {
+  0%, 100% { border-radius: 48% 52% 42% 58% / 55% 45% 48% 52%; }
+  33% { border-radius: 42% 58% 48% 52% / 48% 52% 55% 45%; }
+  66% { border-radius: 55% 45% 55% 45% / 52% 48% 42% 58%; }
+}
