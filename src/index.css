@@ -1,5 +1,5 @@
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -7,6 +7,32 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* Zen color palette */
+  --zen-bg-deep: #0b1120;
+  --zen-bg-mid: #101b2e;
+  --zen-bg-surface: #162033;
+  --zen-accent: #5eadcf;
+  --zen-accent-soft: rgba(94, 173, 207, 0.15);
+  --zen-accent-glow: rgba(94, 173, 207, 0.25);
+  --zen-text: rgba(200, 215, 230, 0.9);
+  --zen-text-muted: rgba(160, 180, 200, 0.5);
+  --zen-border: rgba(100, 150, 180, 0.12);
+  --zen-glass: rgba(16, 27, 46, 0.7);
+
+  /* Drop colors - softer, pastel-toned */
+  --drop-1: #6ec6d8;
+  --drop-1-light: #a3e0ec;
+  --drop-1-dark: #4a9fb3;
+  --drop-2: #d4a574;
+  --drop-2-light: #e8c9a6;
+  --drop-2-dark: #b8875a;
+  --drop-3: #c97b8b;
+  --drop-3-light: #dfa3b0;
+  --drop-3-dark: #a85e6e;
+
+  /* Safe area for Android nav */
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 body {
@@ -15,7 +41,7 @@ body {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  background-color: #0f172a; /* Dark background behind canvas */
+  background-color: var(--zen-bg-deep);
   display: flex;
   place-items: center;
   min-width: 320px;
@@ -25,4 +51,12 @@ body {
 #root {
   width: 100%;
   height: 100%;
+}
+
+/* Blob wobble animation for avatars */
+@keyframes blob-wobble {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  25% { transform: scale(1.02) rotate(1deg); }
+  50% { transform: scale(0.98) rotate(-1deg); }
+  75% { transform: scale(1.01) rotate(0.5deg); }
 }

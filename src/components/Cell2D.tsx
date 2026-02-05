@@ -8,12 +8,12 @@ interface Cell2DProps {
     col: number;
 }
 
-// Distinct color palette - clear progression from cool to hot
+// Zen color palette - softer, muted tones
 const COLORS: Record<number, { main: string; light: string; dark: string }> = {
     0: { main: 'transparent', light: 'transparent', dark: 'transparent' },
-    1: { main: '#00d4aa', light: '#5effdb', dark: '#00a888' }, // Teal/Cyan
-    2: { main: '#ffb347', light: '#ffd699', dark: '#e69520' }, // Orange/Amber
-    3: { main: '#ff4757', light: '#ff7f8a', dark: '#d63040' }, // Red/Coral
+    1: { main: '#6ec6d8', light: '#a3e0ec', dark: '#4a9fb3' }, // Soft teal
+    2: { main: '#d4a574', light: '#e8c9a6', dark: '#b8875a' }, // Warm sand
+    3: { main: '#c97b8b', light: '#dfa3b0', dark: '#a85e6e' }, // Muted rose
 };
 
 export function Cell2D({ row, col }: Cell2DProps) {
@@ -31,13 +31,11 @@ export function Cell2D({ row, col }: Cell2DProps) {
 
         soundManager.playDrip();
 
-        // Handle powerups
         if (activePowerup === 'rain') {
             useRainPowerup(row, col);
         } else if (activePowerup === 'bomb') {
             useBombPowerup(row, col);
         } else if (activePowerup === 'laser') {
-            // Default to clearing row for now
             useLaserPowerup(row, col, 'row');
         } else {
             addDrop(row, col);
@@ -46,7 +44,7 @@ export function Cell2D({ row, col }: Cell2DProps) {
 
     const size = useMemo(() => {
         if (value === 0) return 0;
-        return 32 + value * 6; // 38, 44, 50 px
+        return 30 + value * 7; // 37, 44, 51 px
     }, [value]);
 
     const palette = COLORS[value] || COLORS[0];
@@ -78,8 +76,8 @@ export function Cell2D({ row, col }: Cell2DProps) {
                             scale: 0.3,
                             opacity: 0,
                         }}
-                        whileHover={{ scale: 1.08 }}
-                        whileTap={{ scale: 0.92 }}
+                        whileHover={{ scale: 1.06 }}
+                        whileTap={{ scale: 0.94 }}
                         onTapStart={() => setIsPressed(true)}
                         onTap={() => setIsPressed(false)}
                         onTapCancel={() => setIsPressed(false)}
@@ -88,16 +86,15 @@ export function Cell2D({ row, col }: Cell2DProps) {
                             height: size,
                             borderRadius: '50%',
                             position: 'relative',
-                            background: `radial-gradient(circle at 30% 30%, ${palette.light}, ${palette.main} 60%, ${palette.dark})`,
-                            // Simplified shadow for GPU performance
-                            boxShadow: `0 4px 16px ${palette.dark}66, inset 0 2px 4px rgba(255,255,255,0.3)`,
+                            background: `radial-gradient(circle at 35% 30%, ${palette.light}, ${palette.main} 55%, ${palette.dark})`,
+                            boxShadow: `0 4px 20px ${palette.dark}44, 0 0 30px ${palette.main}22, inset 0 2px 6px rgba(255,255,255,0.25)`,
                             willChange: 'transform, opacity',
                         }}
                         transition={{
                             type: 'spring',
-                            stiffness: 500,
-                            damping: 25,
-                            opacity: { duration: 0.2 },
+                            stiffness: 400,
+                            damping: 28,
+                            opacity: { duration: 0.25 },
                         }}
                     />
                 )}
@@ -105,5 +102,3 @@ export function Cell2D({ row, col }: Cell2DProps) {
         </div>
     );
 }
-
-

@@ -19,13 +19,11 @@ export function Projectile2D({ projectile }: Projectile2DProps) {
 
         const gridRect = gridWrapper.getBoundingClientRect();
 
-        // Grid layout constants
         const isMobile = window.innerWidth <= 480;
         const cellSize = isMobile ? 40 : 50;
-        const gap = isMobile ? 8 : 12;
-        const padding = isMobile ? 12 : 16;
+        const gap = isMobile ? 6 : 10;
+        const padding = isMobile ? 10 : 16;
 
-        // Calculate cell centers
         const startCenterX = gridRect.left + padding + (start[0] * (cellSize + gap)) + (cellSize / 2);
         const startCenterY = gridRect.top + padding + (start[1] * (cellSize + gap)) + (cellSize / 2);
         const endCenterX = gridRect.left + padding + (end[0] * (cellSize + gap)) + (cellSize / 2);
@@ -45,17 +43,17 @@ export function Projectile2D({ projectile }: Projectile2DProps) {
                 x: startX,
                 y: startY,
                 scale: 0.4,
-                opacity: 0.9,
+                opacity: 0.8,
             }}
             animate={{
                 x: endX,
                 y: endY,
-                scale: [0.4, 0.9, 1.1, 1],
-                opacity: [0.9, 1, 1, 0],
+                scale: [0.4, 0.85, 1, 0.9],
+                opacity: [0.8, 1, 1, 0],
             }}
             transition={{
-                duration: 0.45, // Faster for snappier feel
-                ease: [0.22, 1, 0.36, 1], // Smooth ease-out
+                duration: 0.45,
+                ease: [0.22, 1, 0.36, 1],
                 scale: {
                     duration: 0.45,
                     times: [0, 0.5, 0.8, 1],
@@ -69,20 +67,17 @@ export function Projectile2D({ projectile }: Projectile2DProps) {
                 position: 'fixed',
                 left: 0,
                 top: 0,
-                width: 28,
-                height: 28,
+                width: 24,
+                height: 24,
                 borderRadius: '50%',
-                // Teal gradient to blend with target drops
-                background: 'radial-gradient(circle at 30% 30%, #5effdb, #00d4aa)',
-                // Simplified shadow for GPU performance
-                boxShadow: '0 0 12px rgba(0, 212, 170, 0.6)',
+                background: 'radial-gradient(circle at 35% 30%, #a3e0ec, #6ec6d8)',
+                boxShadow: '0 0 16px rgba(94, 173, 207, 0.4), 0 0 4px rgba(110, 198, 216, 0.6)',
                 pointerEvents: 'none',
                 zIndex: 1000,
-                marginLeft: -14,
-                marginTop: -14,
-                willChange: 'transform, opacity', // GPU acceleration
+                marginLeft: -12,
+                marginTop: -12,
+                willChange: 'transform, opacity',
             }}
         />
     );
 }
-

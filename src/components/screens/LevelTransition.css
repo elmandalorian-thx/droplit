@@ -10,8 +10,7 @@
 .level-bg {
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3e 50%, #0f2847 100%);
-    backdrop-filter: blur(20px);
+    background: linear-gradient(135deg, #0b1120 0%, #101b2e 50%, #112238 100%);
 }
 
 .level-content {
@@ -22,11 +21,11 @@
     align-items: center;
     text-align: center;
     padding: 48px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(100, 150, 180, 0.08);
     border-radius: 24px;
-    backdrop-filter: blur(10px);
-    min-width: 320px;
+    backdrop-filter: blur(12px);
+    min-width: 300px;
 }
 
 /* Level Badge */
@@ -34,94 +33,83 @@
     display: flex;
     align-items: center;
     gap: 16px;
-    margin-bottom: 16px;
-}
-
-.level-emoji {
-    font-size: 2rem;
+    margin-bottom: 12px;
 }
 
 .level-number {
-    font-size: 3rem;
-    font-weight: 800;
-    background: linear-gradient(135deg, #00d4aa 0%, #67e8f9 50%, #00d4aa 100%);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    letter-spacing: 2px;
+    font-size: 4rem;
+    font-weight: 200;
+    color: rgba(94, 173, 207, 0.7);
+    letter-spacing: 4px;
 }
 
 /* Difficulty Message */
 .level-message {
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 1.25rem;
+    color: rgba(160, 180, 200, 0.45);
+    font-size: 1rem;
     font-style: italic;
-    margin: 0 0 32px 0;
+    margin: 0 0 36px 0;
+    font-weight: 300;
 }
 
 /* Stats Grid */
 .level-stats {
     display: flex;
-    gap: 32px;
-    margin-bottom: 32px;
+    gap: 40px;
+    margin-bottom: 36px;
 }
 
 .stat-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
-}
-
-.stat-icon {
-    font-size: 1.5rem;
+    gap: 6px;
 }
 
 .stat-value {
-    font-size: 2rem;
-    font-weight: 700;
-    color: white;
+    font-size: 1.75rem;
+    font-weight: 300;
+    color: rgba(200, 215, 230, 0.8);
 }
 
 .stat-label {
-    font-size: 0.875rem;
-    color: rgba(255, 255, 255, 0.5);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-/* Continue Button */
-.continue-btn {
-    padding: 16px 48px;
-    font-size: 1.125rem;
-    font-weight: 700;
-    background: linear-gradient(135deg, #00d4aa 0%, #00a888 100%);
-    border: none;
-    border-radius: 50px;
-    color: white;
-    cursor: pointer;
-    box-shadow: 0 8px 32px rgba(0, 212, 170, 0.4);
-    transition: all 0.3s ease;
+    font-size: 0.7rem;
+    color: rgba(160, 180, 200, 0.4);
     text-transform: uppercase;
     letter-spacing: 2px;
 }
 
+/* Continue Button */
+.continue-btn {
+    padding: 14px 48px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    background: rgba(94, 173, 207, 0.12);
+    border: 1px solid rgba(94, 173, 207, 0.25);
+    border-radius: 50px;
+    color: #5eadcf;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+}
+
 .continue-btn:hover {
-    box-shadow: 0 12px 40px rgba(0, 212, 170, 0.5);
+    background: rgba(94, 173, 207, 0.2);
 }
 
 /* Mobile */
 @media (max-width: 480px) {
     .level-content {
         padding: 32px 24px;
-        min-width: 280px;
+        min-width: 260px;
     }
 
     .level-number {
-        font-size: 2.5rem;
+        font-size: 3rem;
     }
 
     .level-stats {
-        gap: 24px;
+        gap: 28px;
     }
 }

@@ -4,14 +4,14 @@
     z-index: -1;
     overflow: hidden;
     background: linear-gradient(180deg,
-            #061621 0%,
-            #0a2a3e 25%,
-            #0d3352 50%,
-            #0a2a3e 75%,
-            #061621 100%);
+            #0b1120 0%,
+            #0e1a2e 30%,
+            #112238 50%,
+            #0e1a2e 70%,
+            #0b1120 100%);
 }
 
-/* Ambient ripples */
+/* Ambient ripples - slower and subtler for zen */
 .ambient-ripples {
     position: absolute;
     inset: 0;
@@ -20,26 +20,26 @@
 
 .ambient-ripple {
     position: absolute;
-    width: 120px;
-    height: 120px;
+    width: 150px;
+    height: 150px;
     border-radius: 50%;
-    border: 2px solid rgba(0, 212, 170, 0.08);
-    animation: ambient-pulse 5s ease-out infinite;
+    border: 1px solid rgba(94, 173, 207, 0.04);
+    animation: ambient-pulse 8s ease-out infinite;
     pointer-events: none;
 }
 
 @keyframes ambient-pulse {
     0% {
-        transform: scale(0.2);
+        transform: scale(0.3);
         opacity: 0;
     }
 
-    20% {
-        opacity: 0.4;
+    15% {
+        opacity: 0.3;
     }
 
     100% {
-        transform: scale(3);
+        transform: scale(4);
         opacity: 0;
     }
 }
@@ -52,7 +52,7 @@
     border-radius: 50%;
     transform: translate(-50%, -50%);
     pointer-events: none;
-    animation: ripple-expand 2s ease-out forwards;
+    animation: ripple-expand 2.5s ease-out forwards;
 }
 
 .water-ripple::before,
@@ -60,20 +60,20 @@
     content: '';
     position: absolute;
     inset: -20px;
-    border: 2px solid rgba(0, 212, 170, 0.4);
+    border: 1px solid rgba(94, 173, 207, 0.25);
     border-radius: 50%;
-    animation: ripple-ring 2s ease-out forwards;
+    animation: ripple-ring 2.5s ease-out forwards;
 }
 
 .water-ripple::after {
     inset: -10px;
-    animation-delay: 0.1s;
+    animation-delay: 0.15s;
 }
 
 @keyframes ripple-ring {
     0% {
         transform: scale(0.3);
-        opacity: 1;
+        opacity: 0.8;
     }
 
     100% {
@@ -85,39 +85,39 @@
 @keyframes ripple-expand {
     0% {
         box-shadow:
-            0 0 0 0 rgba(0, 212, 170, 0.4),
-            0 0 0 0 rgba(0, 212, 170, 0.3),
-            0 0 0 0 rgba(0, 212, 170, 0.2);
+            0 0 0 0 rgba(94, 173, 207, 0.2),
+            0 0 0 0 rgba(94, 173, 207, 0.15),
+            0 0 0 0 rgba(94, 173, 207, 0.1);
     }
 
     100% {
         box-shadow:
-            0 0 0 30px rgba(0, 212, 170, 0),
-            0 0 0 60px rgba(0, 212, 170, 0),
-            0 0 0 90px rgba(0, 212, 170, 0);
+            0 0 0 30px rgba(94, 173, 207, 0),
+            0 0 0 60px rgba(94, 173, 207, 0),
+            0 0 0 90px rgba(94, 173, 207, 0);
     }
 }
 
-/* Gradient overlay */
+/* Gradient overlay - softer vignette */
 .water-gradient {
     position: absolute;
     inset: 0;
     background: radial-gradient(ellipse at center,
             transparent 0%,
-            rgba(6, 22, 33, 0.3) 70%,
-            rgba(6, 22, 33, 0.7) 100%);
+            rgba(11, 17, 32, 0.2) 60%,
+            rgba(11, 17, 32, 0.5) 100%);
     pointer-events: none;
 }
 
-/* Caustic light effect */
+/* Caustic light effect - slower, dreamier */
 .caustics {
     position: absolute;
     inset: 0;
     background:
-        url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 0 C60 30, 40 70, 50 100 M0 50 C30 40, 70 60, 100 50' fill='none' stroke='rgba(0,212,170,0.03)' stroke-width='2'/%3E%3C/svg%3E");
-    background-size: 200px 200px;
-    opacity: 0.5;
-    animation: caustic-shift 15s linear infinite;
+        url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M60 0 C70 35, 50 85, 60 120 M0 60 C35 50, 85 70, 120 60' fill='none' stroke='rgba(94,173,207,0.015)' stroke-width='1.5'/%3E%3C/svg%3E");
+    background-size: 240px 240px;
+    opacity: 0.6;
+    animation: caustic-shift 25s linear infinite;
     pointer-events: none;
 }
 
@@ -127,26 +127,25 @@
     }
 
     100% {
-        transform: translateX(200px) translateY(100px);
+        transform: translateX(240px) translateY(120px);
     }
 }
 
-/* Subtle shimmer overlay */
+/* Subtle shimmer overlay - very gentle */
 .water-background::before {
     content: '';
     position: absolute;
     inset: 0;
     background: linear-gradient(45deg,
             transparent 0%,
-            rgba(0, 212, 170, 0.02) 50%,
+            rgba(94, 173, 207, 0.01) 50%,
             transparent 100%);
     background-size: 200% 200%;
-    animation: shimmer 8s ease-in-out infinite;
+    animation: shimmer 12s ease-in-out infinite;
     pointer-events: none;
 }
 
 @keyframes shimmer {
-
     0%,
     100% {
         background-position: 0% 0%;

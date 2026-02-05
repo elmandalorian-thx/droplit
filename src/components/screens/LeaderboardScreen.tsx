@@ -10,7 +10,6 @@ interface LeaderboardScreenProps {
 export function LeaderboardScreen({ onBack }: LeaderboardScreenProps) {
     const { profiles } = useProfileStore();
 
-    // Sort profiles by highest level, then total clears
     const sortedProfiles = [...profiles].sort((a, b) => {
         if (b.stats.highestLevel !== a.stats.highestLevel) {
             return b.stats.highestLevel - a.stats.highestLevel;
@@ -20,27 +19,19 @@ export function LeaderboardScreen({ onBack }: LeaderboardScreenProps) {
 
     return (
         <div className="leaderboard-screen">
-            <div className="leaderboard-bg">
-                {/* Reusing the water effect from welcome screen via CSS or component if needed, 
-                    but here we'll use the CSS background */}
-                <div className="ripple-container">
-                    <div className="ripple" style={{ left: '20%', top: '30%', animationDelay: '0s' }} />
-                    <div className="ripple" style={{ left: '80%', top: '60%', animationDelay: '2s' }} />
-                    <div className="ripple" style={{ left: '50%', top: '80%', animationDelay: '4s' }} />
-                </div>
-            </div>
+            <div className="leaderboard-bg" />
 
             <motion.div
                 className="leaderboard-content"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
+                transition={{ duration: 0.6, ease: 'easeOut' }}
             >
-                <h1 className="leaderboard-title">Leaderboard</h1>
+                <h1 className="leaderboard-title">Rankings</h1>
 
                 <div className="leaderboard-list">
                     <div className="leaderboard-header">
-                        <span>Rank</span>
+                        <span>#</span>
                         <span>Player</span>
                         <span>Level</span>
                         <span>Combo</span>
@@ -51,25 +42,20 @@ export function LeaderboardScreen({ onBack }: LeaderboardScreenProps) {
                         <motion.div
                             key={profile.id}
                             className={`leaderboard-row ${index < 3 ? `rank-${index + 1}` : ''}`}
-                            initial={{ opacity: 0, x: -20 }}
+                            initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: index * 0.1 }}
+                            transition={{ delay: index * 0.08 }}
                         >
                             <div className="rank-col">
-                                {index === 0 && '👑'}
-                                {index === 1 && '🥈'}
-                                {index === 2 && '🥉'}
-                                {index > 2 && `#${index + 1}`}
+                                {index + 1}
                             </div>
 
                             <div className="player-col">
-                                <div className="player-avatar-small">
-                                    <BlobbyAvatar
-                                        seed={profile.avatarSeed}
-                                        color={profile.avatarColor}
-                                        size={32}
-                                    />
-                                </div>
+                                <BlobbyAvatar
+                                    seed={profile.avatarSeed}
+                                    color={profile.avatarColor}
+                                    size={28}
+                                />
                                 <span className="player-name">{profile.name}</span>
                             </div>
 
@@ -89,7 +75,7 @@ export function LeaderboardScreen({ onBack }: LeaderboardScreenProps) {
 
                     {sortedProfiles.length === 0 && (
                         <div className="empty-leaderboard">
-                            No profiles yet. Start playing!
+                            No players yet.
                         </div>
                     )}
                 </div>
@@ -97,10 +83,10 @@ export function LeaderboardScreen({ onBack }: LeaderboardScreenProps) {
                 <motion.button
                     className="back-btn"
                     onClick={onBack}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
                 >
-                    Back to Menu
+                    Back
                 </motion.button>
             </motion.div>
         </div>
