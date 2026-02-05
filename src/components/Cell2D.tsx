@@ -15,6 +15,22 @@ const COLORS: Record<number, { main: string; light: string; dark: string }> = {
     3: { main: '#c97b8b', light: '#dfa3b0', dark: '#a85e6e' },
 };
 
+// Organic blob shapes per drop value
+const SHAPES: Record<number, string> = {
+    0: '50%',
+    1: '42% 58% 55% 45% / 53% 47% 52% 48%',
+    2: '55% 45% 48% 52% / 47% 53% 55% 45%',
+    3: '48% 52% 42% 58% / 55% 45% 48% 52%',
+};
+
+// Continuous jelly morph CSS animations per drop value
+const JELLY_ANIMATION: Record<number, string> = {
+    0: 'none',
+    1: 'jelly-morph-1 4s ease-in-out infinite',
+    2: 'jelly-morph-2 3.5s ease-in-out infinite',
+    3: 'jelly-morph-3 3s ease-in-out infinite',
+};
+
 export function Cell2D({ row, col }: Cell2DProps) {
     const value = useGameStore(state => state.grid[row]?.[col] ?? 0);
     const addDrop = useGameStore(state => state.addDrop);
@@ -44,7 +60,7 @@ export function Cell2D({ row, col }: Cell2DProps) {
 
     const size = useMemo(() => {
         if (value === 0) return 0;
-        return 30 + value * 7;
+        return 20 + value * 6;
     }, [value]);
 
     const palette = COLORS[value] || COLORS[0];
@@ -68,23 +84,25 @@ export function Cell2D({ row, col }: Cell2DProps) {
                 {value > 0 && (
                     <motion.div
                         key={`drop-${row}-${col}-${value}`}
-                        initial={{ scale: 0.5, opacity: 0 }}
+                        initial={{ scale: 0, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0.3, opacity: 0 }}
-                        whileHover={{ scale: 1.06 }}
-                        whileTap={{ scale: 0.94 }}
+                        exit={{ scale: 0.2, opacity: 0 }}
+                        whileHover={{ scale: 1.12 }}
+                        whileTap={{ scaleX: 1.14, scaleY: 0.86 }}
                         style={{
                             width: size,
                             height: size,
-                            borderRadius: '50%',
+                            borderRadius: SHAPES[value] || '50%',
                             background: `radial-gradient(circle at 35% 30%, ${palette.light}, ${palette.main} 55%, ${palette.dark})`,
-                            boxShadow: `0 2px 12px ${palette.dark}33, inset 0 1px 4px rgba(255,255,255,0.2)`,
-                            willChange: 'transform, opacity',
+                            boxShadow: `0 4px 16px ${palette.dark}40, 0 1px 6px ${palette.dark}25, inset 0 2px 6px rgba(255,255,255,0.25)`,
+                            animation: JELLY_ANIMATION[value] || 'none',
+                            willChange: 'transform, opacity, border-radius',
                         }}
                         transition={{
                             type: 'spring',
-                            stiffness: 400,
-                            damping: 28,
+                            stiffness: 300,
+                            damping: 14,
+                            mass: 0.8,
                             opacity: { duration: 0.25 },
                         }}
                     />
