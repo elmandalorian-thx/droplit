@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { GameContainer } from './components/GameContainer'
 import { HUD } from './components/HUD'
 import { WelcomeScreen } from './components/screens/WelcomeScreen'
@@ -17,72 +17,83 @@ function App() {
   const activeProfile = useProfileStore(state => state.getActiveProfile())
   const updateStats = useProfileStore(state => state.updateStats)
   const { currentLevel, levelConfig, advanceLevel, resetToLevel } = useLevelStore()
-  const { status, initializeLevel, currentCombo, dropsAvailable } = useGameStore()
+  const status = useGameStore(state => state.status)
+  const initializeLevel = useGameStore(state => state.initializeLevel)
+  const currentCombo = useGameStore(state => state.currentCombo)
+  const dropsAvailable = useGameStore(state => state.dropsAvailable)
   const prevDropsRef = useRef(dropsAvailable)
 
-  const handleStartGame = () => {
+  // Use refs for values accessed inside effects to avoid stale closures
+  const activeProfileRef = useRef(activeProfile)
+  const currentLevelRef = useRef(currentLevel)
+  const screenRef = useRef(screen)
+  activeProfileRef.current = activeProfile
+  currentLevelRef.current = currentLevel
+  screenRef.current = screen
+
+  const handleStartGame = useCallback(() => {
     if (activeProfile) {
-      // Start from player's current level or level 1
       const startLevel = activeProfile.stats.currentLevel || 1
       resetToLevel(startLevel)
       setScreen('levelTransition')
     }
-  }
+  }, [activeProfile, resetToLevel])
 
-  const handleContinueFromTransition = () => {
-    // Initialize game with level config and current level for powerup unlocks
+  const handleContinueFromTransition = useCallback(() => {
     initializeLevel(levelConfig, currentLevel)
     setScreen('playing')
-  }
+  }, [initializeLevel, levelConfig, currentLevel])
 
-  const handleBackToMenu = () => {
+  const handleBackToMenu = useCallback(() => {
     setScreen('welcome')
-  }
+  }, [])
 
-  // Watch for level completion (win)
+  // Watch for level completion
   useEffect(() => {
-    if (status === 'won' && screen === 'playing') {
-      // Update profile stats
+    const profile = activeProfileRef.current
+    const level = currentLevelRef.current
+
+    if (status === 'won' && screenRef.current === 'playing') {
       updateStats({
-        highestLevel: Math.max(activeProfile?.stats.highestLevel || 0, currentLevel),
-        currentLevel: currentLevel + 1,
-        totalClears: (activeProfile?.stats.totalClears || 0) + 1,
-        gamesPlayed: (activeProfile?.stats.gamesPlayed || 0) + 1,
+        highestLevel: Math.max(profile?.stats.highestLevel || 0, level),
+        currentLevel: level + 1,
+        totalClears: (profile?.stats.totalClears || 0) + 1,
+        gamesPlayed: (profile?.stats.gamesPlayed || 0) + 1,
       })
 
-      // Advance to next level
       soundManager.playLevelUp()
       setTimeout(() => {
         advanceLevel()
         setScreen('levelTransition')
-      }, 1500) // Brief delay to show "LEVEL CLEARED"
+      }, 1500)
     }
 
-    if (status === 'lost' && screen === 'playing') {
+    if (status === 'lost' && screenRef.current === 'playing') {
       soundManager.playGameOver()
       updateStats({
-        gamesPlayed: (activeProfile?.stats.gamesPlayed || 0) + 1,
+        gamesPlayed: (activeProfileRef.current?.stats.gamesPlayed || 0) + 1,
       })
     }
-  }, [status])
+  }, [status, updateStats, advanceLevel])
 
   // Track drops used
   useEffect(() => {
-    // Only count if playing and drops decreased (consumed)
-    if (screen === 'playing' && dropsAvailable < prevDropsRef.current) {
+    if (screenRef.current === 'playing' && dropsAvailable < prevDropsRef.current) {
+      const profile = activeProfileRef.current
       updateStats({
-        totalDropsUsed: (activeProfile?.stats.totalDropsUsed || 0) + (prevDropsRef.current - dropsAvailable)
+        totalDropsUsed: (profile?.stats.totalDropsUsed || 0) + (prevDropsRef.current - dropsAvailable)
       })
     }
     prevDropsRef.current = dropsAvailable
-  }, [dropsAvailable, screen])
+  }, [dropsAvailable, updateStats])
 
   // Watch for best combo
   useEffect(() => {
-    if (activeProfile && currentCombo > activeProfile.stats.bestCombo) {
+    const profile = activeProfileRef.current
+    if (profile && currentCombo > profile.stats.bestCombo) {
       updateStats({ bestCombo: currentCombo })
     }
-  }, [currentCombo])
+  }, [currentCombo, updateStats])
 
   if (screen === 'welcome') {
     return (
@@ -120,6 +131,3 @@ function App() {
 }
 
 export default App
-
-
-

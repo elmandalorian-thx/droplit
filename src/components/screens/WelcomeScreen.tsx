@@ -38,35 +38,13 @@ export function WelcomeScreen({ onStartGame, onShowLeaderboard }: WelcomeScreenP
         <div className="welcome-screen">
             <div className="welcome-bg" />
 
-            <div className="ripple-container">
-                {[...Array(4)].map((_, i) => (
-                    <div
-                        key={i}
-                        className="ripple"
-                        style={{
-                            left: `${20 + Math.random() * 60}%`,
-                            top: `${20 + Math.random() * 60}%`,
-                            animationDelay: `${i * 2}s`,
-                        }}
-                    />
-                ))}
-            </div>
-
             <motion.div
                 className="welcome-content"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, ease: 'easeOut' }}
+                transition={{ duration: 0.6, ease: 'easeOut' }}
             >
-                <motion.h1
-                    className="welcome-title"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 1, delay: 0.2 }}
-                >
-                    droplit
-                </motion.h1>
-                <p className="welcome-subtitle">chain reaction puzzle</p>
+                <h1 className="welcome-title">droplit</h1>
 
                 <div className="profile-section">
                     <h2 className="section-title">Select Player</h2>
@@ -80,13 +58,13 @@ export function WelcomeScreen({ onStartGame, onShowLeaderboard }: WelcomeScreenP
                                     initial={{ opacity: 0, x: -20 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     exit={{ opacity: 0, x: 20 }}
-                                    transition={{ delay: index * 0.1 }}
+                                    transition={{ delay: index * 0.05 }}
                                     onClick={() => selectProfile(profile.id)}
                                 >
                                     <BlobbyAvatar
                                         seed={profile.avatarSeed}
                                         color={profile.avatarColor}
-                                        size={48}
+                                        size={44}
                                     />
                                     <div className="profile-info">
                                         <span className="profile-name">{profile.name}</span>
@@ -102,7 +80,7 @@ export function WelcomeScreen({ onStartGame, onShowLeaderboard }: WelcomeScreenP
                                             setShowDeleteConfirm(profile.id);
                                         }}
                                     >
-                                        ✕
+                                        &#x2715;
                                     </button>
 
                                     {showDeleteConfirm === profile.id && (
@@ -181,7 +159,7 @@ export function WelcomeScreen({ onStartGame, onShowLeaderboard }: WelcomeScreenP
                     </div>
                 </div>
 
-                <div style={{ display: 'flex', gap: '12px', marginTop: '16px', width: '100%' }}>
+                <div style={{ display: 'flex', gap: '12px', width: '100%' }}>
                     <motion.button
                         className="start-btn"
                         onClick={handleStartGame}
@@ -194,12 +172,11 @@ export function WelcomeScreen({ onStartGame, onShowLeaderboard }: WelcomeScreenP
                     </motion.button>
 
                     <motion.button
-                        className="start-btn"
+                        className="start-btn secondary"
                         onClick={onShowLeaderboard}
                         whileHover={{ scale: 1.03 }}
                         whileTap={{ scale: 0.97 }}
-                        style={{ flex: 1, padding: '16px' }}
-                        title="Leaderboard"
+                        style={{ flex: 1 }}
                     >
                         Rankings
                     </motion.button>

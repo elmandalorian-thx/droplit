@@ -21,8 +21,8 @@ export function Projectile2D({ projectile }: Projectile2DProps) {
 
         const isMobile = window.innerWidth <= 480;
         const cellSize = isMobile ? 40 : 50;
-        const gap = isMobile ? 6 : 10;
-        const padding = isMobile ? 10 : 16;
+        const gap = isMobile ? 4 : 6;
+        const padding = isMobile ? 8 : 12;
 
         const startCenterX = gridRect.left + padding + (start[0] * (cellSize + gap)) + (cellSize / 2);
         const startCenterY = gridRect.top + padding + (start[1] * (cellSize + gap)) + (cellSize / 2);
