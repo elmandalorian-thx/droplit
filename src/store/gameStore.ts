@@ -252,8 +252,9 @@ export const useGameStore = create<GameState>((set, get) => ({
     checkWinCondition: () => {
         const state = get();
         const isEmpty = state.grid.every(r => r.every(c => c === 0));
-        if (isEmpty) set({ status: 'won' });
-        else if (state.dropsAvailable <= 0) set({ status: 'lost' });
+        if (isEmpty) set({ status: 'won', isProcessing: false });
+        else if (state.dropsAvailable <= 0) set({ status: 'lost', isProcessing: false });
+        else set({ isProcessing: false });
     },
 
     resetGame: () => set(() => ({

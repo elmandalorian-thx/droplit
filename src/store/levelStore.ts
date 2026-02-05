@@ -22,16 +22,20 @@ interface LevelState {
 // Generate level configuration based on level number
 export function generateLevelConfig(level: number): LevelConfig {
     // Difficulty curve:
-    // - Drops decrease as level increases
-    // - More empty cells at higher levels
-    // - More red/orange at higher levels
+    // - Drops: generous early (70+), tightens steadily to force powerup use
+    // - Empty cells: 0 for first few levels, ramps up significantly
+    // - More red/orange at higher levels (harder to chain)
 
-    const dropsAvailable = Math.max(20, 55 - Math.floor(level * 0.7));
-    const emptyCells = Math.min(20, Math.floor(level / 3));
+    // Drops: 70 at level 1, drops by ~1.5 per level, floor at 18
+    const dropsAvailable = Math.max(18, Math.round(70 - (level - 1) * 1.5));
 
-    // Color ratios increase with level
-    const redRatio = Math.min(0.35, 0.08 + level * 0.006);
-    const orangeRatio = Math.min(0.40, 0.20 + level * 0.004);
+    // Empty cells: 0 for levels 1-3, then ramps up steadily
+    // Level 1-3: 0, Level 5: ~2, Level 10: ~7, Level 20: ~16, Level 30+: caps at 24
+    const emptyCells = level <= 3 ? 0 : Math.min(24, Math.floor((level - 3) * 0.8));
+
+    // Color ratios - more reds/oranges at higher levels
+    const redRatio = Math.min(0.35, 0.05 + level * 0.008);
+    const orangeRatio = Math.min(0.40, 0.18 + level * 0.005);
 
     return {
         level,

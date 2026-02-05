@@ -60,6 +60,9 @@ export function Cell2D({ row, col }: Cell2DProps) {
                 cursor: 'pointer',
                 minWidth: 50,
                 minHeight: 50,
+                WebkitTapHighlightColor: 'transparent',
+                outline: 'none',
+                userSelect: 'none',
             }}
             onClick={handleTap}
         >
