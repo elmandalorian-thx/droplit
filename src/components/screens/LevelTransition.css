@@ -27,6 +27,17 @@
 
 .level-badge {
     margin-bottom: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.level-label {
+    font-size: 0.65rem;
+    color: rgba(160, 180, 200, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: -4px;
 }
 
 .level-number {
@@ -39,9 +50,24 @@
 .level-message {
     color: rgba(160, 180, 200, 0.3);
     font-size: 0.85rem;
-    margin: 0 0 40px 0;
+    margin: 0 0 32px 0;
     font-weight: 300;
     letter-spacing: 1px;
+}
+
+.unlock-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 18px;
+    margin-bottom: 32px;
+    background: rgba(94, 173, 207, 0.08);
+    border: 1px solid rgba(94, 173, 207, 0.18);
+    border-radius: 20px;
+    color: rgba(94, 173, 207, 0.7);
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
 }
 
 .level-stats {

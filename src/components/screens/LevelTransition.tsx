@@ -7,6 +7,12 @@ interface LevelTransitionProps {
     onContinue: () => void;
 }
 
+const POWERUP_UNLOCKS: Record<number, string> = {
+    5: 'Freeze',
+    10: 'Bomb',
+    15: 'Laser',
+};
+
 export function LevelTransition({ config, onContinue }: LevelTransitionProps) {
     const getDifficultyMessage = (level: number): string => {
         if (level <= 5) return "Breathe and observe.";
@@ -17,6 +23,8 @@ export function LevelTransition({ config, onContinue }: LevelTransitionProps) {
         if (level <= 50) return "One with the current.";
         return "Beyond.";
     };
+
+    const unlockName = POWERUP_UNLOCKS[config.level];
 
     return (
         <div className="level-transition">
@@ -34,6 +42,7 @@ export function LevelTransition({ config, onContinue }: LevelTransitionProps) {
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.2 }}
                 >
+                    <span className="level-label">Level</span>
                     <span className="level-number">{config.level}</span>
                 </motion.div>
 
@@ -45,6 +54,20 @@ export function LevelTransition({ config, onContinue }: LevelTransitionProps) {
                 >
                     {getDifficultyMessage(config.level)}
                 </motion.p>
+
+                {unlockName && (
+                    <motion.div
+                        className="unlock-badge"
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.55, type: 'spring', damping: 15 }}
+                    >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                        </svg>
+                        {unlockName} unlocked
+                    </motion.div>
+                )}
 
                 <motion.div
                     className="level-stats"

@@ -3,6 +3,7 @@ import { GameContainer } from './components/GameContainer'
 import { HUD } from './components/HUD'
 import { WelcomeScreen } from './components/screens/WelcomeScreen'
 import { LevelTransition } from './components/screens/LevelTransition'
+import { LevelSelect } from './components/screens/LevelSelect'
 import { LeaderboardScreen } from './components/screens/LeaderboardScreen'
 import { WaterBackground } from './components/effects/WaterBackground'
 import { useProfileStore } from './store/profileStore'
@@ -10,7 +11,7 @@ import { useLevelStore } from './store/levelStore'
 import { useGameStore } from './store/gameStore'
 import { soundManager } from './utils/SoundManager'
 
-type GameScreen = 'welcome' | 'levelTransition' | 'playing' | 'leaderboard'
+type GameScreen = 'welcome' | 'levelSelect' | 'levelTransition' | 'playing' | 'leaderboard'
 
 function App() {
   const [screen, setScreen] = useState<GameScreen>('welcome')
@@ -31,24 +32,46 @@ function App() {
   currentLevelRef.current = currentLevel
   screenRef.current = screen
 
+  // Welcome → Level Select
   const handleStartGame = useCallback(() => {
     if (activeProfile) {
-      const startLevel = activeProfile.stats.currentLevel || 1
-      resetToLevel(startLevel)
-      setScreen('levelTransition')
+      setScreen('levelSelect')
     }
-  }, [activeProfile, resetToLevel])
+  }, [activeProfile])
 
+  // Level Select → Level Transition
+  const handleSelectLevel = useCallback((level: number) => {
+    resetToLevel(level)
+    setScreen('levelTransition')
+  }, [resetToLevel])
+
+  // Level Transition → Playing
   const handleContinueFromTransition = useCallback(() => {
     initializeLevel(levelConfig, currentLevel)
     setScreen('playing')
+  }, [initializeLevel, levelConfig, currentLevel])
+
+  // Win → Next Level (advance and show transition)
+  const handleNextLevel = useCallback(() => {
+    advanceLevel()
+    setScreen('levelTransition')
+  }, [advanceLevel])
+
+  // Win/Lose → Level Select
+  const handleGoToLevels = useCallback(() => {
+    setScreen('levelSelect')
+  }, [])
+
+  // Lose or Reset → Retry same level with fresh grid
+  const handleRetry = useCallback(() => {
+    initializeLevel(levelConfig, currentLevel)
   }, [initializeLevel, levelConfig, currentLevel])
 
   const handleBackToMenu = useCallback(() => {
     setScreen('welcome')
   }, [])
 
-  // Watch for level completion
+  // Watch for level completion — update stats only, user drives navigation
   useEffect(() => {
     const profile = activeProfileRef.current
     const level = currentLevelRef.current
@@ -60,12 +83,7 @@ function App() {
         totalClears: (profile?.stats.totalClears || 0) + 1,
         gamesPlayed: (profile?.stats.gamesPlayed || 0) + 1,
       })
-
       soundManager.playLevelUp()
-      setTimeout(() => {
-        advanceLevel()
-        setScreen('levelTransition')
-      }, 1500)
     }
 
     if (status === 'lost' && screenRef.current === 'playing') {
@@ -74,7 +92,7 @@ function App() {
         gamesPlayed: (activeProfileRef.current?.stats.gamesPlayed || 0) + 1,
       })
     }
-  }, [status, updateStats, advanceLevel])
+  }, [status, updateStats])
 
   // Track drops used
   useEffect(() => {
@@ -108,6 +126,17 @@ function App() {
     return <LeaderboardScreen onBack={() => setScreen('welcome')} />
   }
 
+  if (screen === 'levelSelect') {
+    return (
+      <LevelSelect
+        highestLevel={activeProfile?.stats.highestLevel || 0}
+        currentLevel={activeProfile?.stats.currentLevel || 1}
+        onSelectLevel={handleSelectLevel}
+        onBack={handleBackToMenu}
+      />
+    )
+  }
+
   if (screen === 'levelTransition') {
     return (
       <LevelTransition
@@ -123,6 +152,9 @@ function App() {
       <GameContainer />
       <HUD
         onBackToMenu={handleBackToMenu}
+        onNextLevel={handleNextLevel}
+        onRetry={handleRetry}
+        onLevelSelect={handleGoToLevels}
         playerName={activeProfile?.name}
         currentLevel={currentLevel}
       />
