@@ -26,8 +26,8 @@ export function generateLevelConfig(level: number): LevelConfig {
     // - Empty cells: 0 for first few levels, ramps up significantly
     // - More red/orange at higher levels (harder to chain)
 
-    // Drops: 70 at level 1, drops by ~1.5 per level, floor at 18
-    const dropsAvailable = Math.max(18, Math.round(70 - (level - 1) * 1.5));
+    // Drops: 10 at level 1, tightens to floor of 4
+    const dropsAvailable = Math.max(4, Math.round(10 - (level - 1) * 0.3));
 
     // Empty cells: 0 for levels 1-3, then ramps up steadily
     // Level 1-3: 0, Level 5: ~2, Level 10: ~7, Level 20: ~16, Level 30+: caps at 24
